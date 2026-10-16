@@ -223,6 +223,21 @@ $\mathbf{Ans}\quad 0.0567 > 0.0170$ ดังนั้นเลือก $\textb
 
 **POS Tagging** คือการกำหนดหมวดคำ (Part of Speech) ให้กับทุกคำในประโยค คำเดียวกันอาจมีหมวดคำต่างกันตามบริบท
 
+**Universal tags (UD)** ชุดหมวดคำมาตรฐานที่ใช้ได้หลายภาษา (ตัวอย่างเฉพาะหมวดหลัก)
+
+| Tag | ความหมาย | ตัวอย่าง |
+|:---:|:---|:---|
+| NOUN | คำนาม | algorithm, cat, mango |
+| VERB | คำกริยา | draw, provide, go |
+| ADJ | คำคุณศัพท์ | red, young, awesome |
+| ADV | คำวิเศษณ์ | very, slowly, yesterday |
+| PROPN | คำนามเฉพาะ | Regina, IBM, Colorado |
+| DET | คำนำหน้านาม | a, an, the, this |
+| ADP | คำบุพบท | in, on, by, under |
+| PRON | คำสรรพนาม | she, who, I |
+
+ยังมี Penn Treebank tagset ที่ละเอียดกว่า (ประมาณ 45 tag เช่น NNP, MD, VB, DT, NN, JJ, RB) และภาษาไทยมี ORCHID tagset (NECTEC ประมาณ 47 tag เช่น NCMN = คำนามทั่วไป, VACT = กริยาแสดงการกระทำ)
+
 #### 3.2.1  Rule-based Tagging
 
 กำหนดข้อความ "a book" และกฎ "ถ้าคำก่อนหน้าเป็น DET คำถัดไปต้องเป็น NOUN" จงหา POS tag ของแต่ละคำ
@@ -358,6 +373,18 @@ $\mathbf{Ans}\quad$ "I.M.F." $\to\ \mathbf{X.X.X.}$ และ "DC10-30" $\to\ \m
 ### 3.3  Sequence Labeling
 
 **Sequence Labeling** คือการกำหนด label ให้ทุก input ในลำดับ ผลลัพธ์ยาวเท่า input และ label แต่ละตัวขึ้นกับคำข้างเคียงด้วย
+
+tag ที่ใช้บอกขอบเขตของ entity (ชื่อเฉพาะที่อาจมีหลาย token)
+
+| Tag | ความหมาย |
+|:---:|:---|
+| B | จุดเริ่ม entity |
+| I | อยู่ภายใน entity |
+| O | ไม่ใช่ entity |
+| E | จุดสิ้นสุด entity |
+| S | Single entity มีแค่ 1 token |
+
+BIO มี tag ทั้งหมด $2n+1$ ตัว เมื่อ $n$ คือจำนวนประเภท entity
 
 #### 3.3.1  BIO / IO / BIOES Tagging
 
