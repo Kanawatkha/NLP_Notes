@@ -173,7 +173,7 @@ Static layout first, no animation, so the content can be checked against the Mar
 - [x] Local git repository on `main` with `origin` set to `https://github.com/Kanawatkha/NLP_Notes.git`; the first commit is prepared locally
 - [ ] User: say go for the push (`git push -u origin main`). It publishes the code and the Markdown, which are derived from the lecture slides and labs; Pages on a free plan needs a public repository (D14)
 - [ ] User: Settings, Pages, Source "GitHub Actions"; open the live URL; offline check on a phone (`TESTING.md` section 6)
-- [ ] Tag `v1.0.0` after the user approves
+- [x] Tag `v1.0.0` after the user approves (done, on commit 36ad4a6)
 - [ ] Share the Pages URL
 
 ## Phase 9 - Changes after launch  (done, pushed in commit 9c50ebe)
@@ -183,7 +183,7 @@ Static layout first, no animation, so the content can be checked against the Mar
 - [x] Layout: the content column has no 880 px cap on desktop; with the rail open it is 840 px at a 1200 px container, folded it takes the rail's room (1104 px). The grid columns animate (380 ms, `transition-[grid-template-columns]`, off under reduced motion), replacing the old FLIP slide
 - [x] Tests: 169 in total (the switch, Fold, hero statistics and slide tests were removed or rewritten); `typecheck`, `lint`, `format:check`, `test`, `build` green. Real browser (1400 px): card width 840, 1104, 840 on fold and unfold, 35 solutions shown, no switch
 - Not measured: Lighthouse after these changes; the frame rate of the width animation on a real device (the rail is a desktop feature, 1024 px and up)
-- [ ] Tag `v1.0.0` after the user approves
+- [x] Tag `v1.0.0` after the user approves (done, on commit 36ad4a6)
 
 ## Future (not planned)
 
