@@ -9,7 +9,7 @@ import { NumberedHeading } from './NumberedHeading';
 
 /**
  * One problem (an item): number chip and title, the problem, then Sol, the steps and the answer.
- * The solution follows the solutions switch inside ExampleBlock. The card rises into place once
+ * The card rises into place once
  * when it comes into view, and lifts a little under a hovering pointer (A7). The browser skips the
  * layout of a card that is far from the window (`content-visibility`), using an estimate of its
  * height until it has been shown once; this is what keeps the first load of the long page light.

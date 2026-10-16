@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { ToastHost } from '@/app/pwa/ToastHost';
-import { SolutionsProvider } from '@/components/content/SolutionsProvider';
 import { BackToTop } from '@/components/layout/BackToTop';
 import { Navbar } from '@/components/layout/Navbar';
 import { UI_TEXT } from '@/config/site';
@@ -22,7 +21,7 @@ export function AppLayout() {
   }, [pathname]);
 
   return (
-    <SolutionsProvider>
+    <>
       <a
         href="#main"
         className="type-button sr-only rounded-sm bg-ink px-4 py-3 text-on-dark focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[70]"
@@ -44,6 +43,6 @@ export function AppLayout() {
       </main>
       <BackToTop />
       <ToastHost />
-    </SolutionsProvider>
+    </>
   );
 }

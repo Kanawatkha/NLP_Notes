@@ -237,30 +237,6 @@
   }
 }
 
-/* ---------- solution answer sheen (A12) ---------- */
-
-.ans-strip {
-  position: relative;
-}
-
-.fold[data-opening] .ans-strip::after {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  width: 30%;
-  background: rgb(255 255 255 / 0.7);
-  transform: translateX(-120%) skewX(-20deg);
-  animation: sheen 700ms var(--ease-out) 200ms both;
-  pointer-events: none;
-}
-
-@keyframes sheen {
-  to {
-    transform: translateX(450%) skewX(-20deg);
-  }
-}
-
 /* ---------- toast (A16) ---------- */
 
 .toast-in {

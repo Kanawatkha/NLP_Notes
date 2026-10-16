@@ -1,9 +1,8 @@
-import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import type { ContentNode } from '@/content/types';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import { jumpTo } from '@/lib/jumpTo';
-import { prefersReducedMotion } from '@/lib/motion';
 import { useActiveAnchor } from '../useActiveAnchor';
 import { RailDrawer } from './RailDrawer';
 import { RailToggle } from './RailToggle';
@@ -13,8 +12,6 @@ import { UI_TEXT } from '@/config/site';
 
 const RAIL_ID = 'contents-rail';
 const DRAWER_ID = 'contents-drawer';
-const SLIDE_MS = 320;
-const SLIDE_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 type RailLayoutProps = {
   root: ContentNode;
@@ -26,10 +23,11 @@ type RailLayoutProps = {
 /**
  * Puts the contents next to the content (UI-SPEC.md section 4).
  *
- * Desktop (1024 px and up): an icon button in a narrow gutter folds a sticky rail. Folding changes
- * the layout at once and plays the movement on top of it with a transform: the text slides from
- * where it was to where it is now. Animating the grid columns instead would lay the whole page
- * out again on every frame.
+ * Desktop (1024 px and up): an icon button in a narrow gutter folds a sticky rail. The content
+ * takes all the room that is left, so it is as wide as the page margins allow with the rail open
+ * and wider with it folded. The width of the rail column is animated (a CSS transition on the grid
+ * columns), so the content grows and shrinks with it; cards that are far from the window are
+ * skipped by `content-visibility`, which keeps each frame cheap. Reduced motion changes at once.
  *
  * Below that: one column, a round floating button at the bottom left, and the same contents in a
  * drawer. Only one of the two layouts is rendered, so there is never a second, hidden tree.
@@ -41,10 +39,7 @@ export function RailLayout({ root, beforeJump, children }: RailLayoutProps) {
   const [railOpen, setRailOpen] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const contentRef = useRef<HTMLDivElement>(null);
   const fabRef = useRef<HTMLButtonElement>(null);
-  const leftBefore = useRef<number | null>(null);
-  const slide = useRef<Animation | null>(null);
 
   const select = (id: string) => {
     reading.activate(id);
@@ -63,35 +58,17 @@ export function RailLayout({ root, beforeJump, children }: RailLayoutProps) {
     fabRef.current?.focus();
   };
 
-  const toggleRail = () => {
-    leftBefore.current = contentRef.current?.getBoundingClientRect().left ?? null;
-    setRailOpen((open) => !open);
-  };
+  const toggleRail = () => setRailOpen((open) => !open);
 
   // the drawer has no place on a wide screen: close it in the same render, so it never reopens on narrowing
   if (desktop && drawerOpen) setDrawerOpen(false);
-
-  // FLIP: the layout has already changed, slide the text from its old position to the new one
-  useLayoutEffect(() => {
-    const from = leftBefore.current;
-    leftBefore.current = null;
-    const el = contentRef.current;
-    if (from === null || !el || prefersReducedMotion() || typeof el.animate !== 'function') return;
-    const dx = from - el.getBoundingClientRect().left;
-    if (Math.abs(dx) < 1) return;
-    slide.current?.cancel();
-    slide.current = el.animate(
-      [{ transform: `translateX(${dx}px)` }, { transform: 'translateX(0)' }],
-      { duration: SLIDE_MS, easing: SLIDE_EASING },
-    );
-  }, [railOpen]);
 
   if (desktop) {
     return (
       <div className="mx-auto max-w-[1200px] px-4 md:px-6">
         <div
           className={cn(
-            'grid overflow-x-clip',
+            'grid overflow-x-clip transition-[grid-template-columns] duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
             railOpen
               ? 'grid-cols-[48px_264px_minmax(0,1fr)]'
               : 'grid-cols-[48px_0px_minmax(0,1fr)]',
@@ -120,9 +97,7 @@ export function RailLayout({ root, beforeJump, children }: RailLayoutProps) {
               </nav>
             </div>
           </div>
-          <div ref={contentRef} className="mx-auto w-full max-w-[880px]">
-            {children}
-          </div>
+          <div className="w-full">{children}</div>
         </div>
       </div>
     );

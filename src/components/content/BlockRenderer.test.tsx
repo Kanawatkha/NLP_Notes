@@ -1,11 +1,7 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { BlockList } from '@/components/content/BlockRenderer';
 import { FigureLabelContext } from '@/components/content/figureLabel';
-import { SolutionsContext } from '@/components/content/solutions';
-import { SolutionsProvider } from '@/components/content/SolutionsProvider';
-import { SolutionsSwitch } from '@/components/layout/SolutionsSwitch';
-import { UI_TEXT } from '@/config/site';
 import { fixtureBlocks, fixtureExample } from '@/test/fixture';
 
 const SOL = '$\\mathbf{Sol}^{n}$';
@@ -62,63 +58,19 @@ describe('BlockRenderer', () => {
   });
 });
 
-describe('example block and the solutions switch', () => {
+describe('example block', () => {
   const md = `จงหา $x$\n\n${SOL}\n\nวิธีทำ ขั้นแรก\n\n$\\mathbf{Ans}\\quad$ คำตอบ`;
-  const withSwitch = () =>
+
+  it('always shows problem, Sol label, steps and answer, with no button to hide them', () => {
     render(
-      <SolutionsProvider>
-        <SolutionsSwitch />
+      <>
         <BlockList blocks={fixtureExample(md)} />
         <BlockList blocks={fixtureExample(md.replace('$x$', '$y$'))} />
-      </SolutionsProvider>,
+      </>,
     );
-
-  it('shows problem, Sol label, steps and answer while solutions are on', () => {
-    withSwitch();
     expect(screen.getAllByText('Sol')).toHaveLength(2);
     expect(screen.getAllByText(/วิธีทำ ขั้นแรก/)).toHaveLength(2);
     expect(screen.getAllByText(/คำตอบ/)).toHaveLength(2);
-    expect(screen.queryByRole('button', { name: UI_TEXT.showSolution })).toBeNull();
-  });
-
-  it('removes Sol, steps and answer when the switch is off, and keeps the problem', () => {
-    window.localStorage.clear();
-    const { container } = withSwitch();
-    fireEvent.click(screen.getByRole('switch', { name: UI_TEXT.solutions }));
-    expect(screen.queryByText('Sol')).toBeNull();
-    expect(screen.queryByText(/วิธีทำ ขั้นแรก/)).toBeNull();
-    expect(screen.queryByText(/คำตอบ/)).toBeNull();
-    expect(container.querySelectorAll('[data-example]')).toHaveLength(2);
-    expect(screen.getAllByRole('button', { name: UI_TEXT.showSolution })).toHaveLength(2);
-    window.localStorage.clear();
-  });
-
-  it('reveals only the pressed card, and the global switch clears that choice', () => {
-    window.localStorage.clear();
-    withSwitch();
-    const sw = screen.getByRole('switch', { name: UI_TEXT.solutions });
-    fireEvent.click(sw); // off
-    const [first] = screen.getAllByRole('button', { name: UI_TEXT.showSolution });
-    fireEvent.click(first);
-    expect(screen.getAllByText('Sol')).toHaveLength(1);
-    expect(screen.getByRole('button', { name: UI_TEXT.hideSolution })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
-
-    fireEvent.click(sw); // on: everything shown
-    expect(screen.getAllByText('Sol')).toHaveLength(2);
-    fireEvent.click(sw); // off again: the earlier per-card choice is gone
-    expect(screen.queryByText('Sol')).toBeNull();
-    window.localStorage.clear();
-  });
-
-  it('follows a context value without a provider', () => {
-    render(
-      <SolutionsContext.Provider value={{ show: false, setShow: () => {} }}>
-        <BlockList blocks={fixtureExample(md)} />
-      </SolutionsContext.Provider>,
-    );
-    expect(screen.queryByText('Sol')).toBeNull();
+    expect(screen.queryByRole('button')).toBeNull();
   });
 });

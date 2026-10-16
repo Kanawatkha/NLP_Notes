@@ -1,6 +1,5 @@
 import { act, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SolutionsContext } from '@/components/content/solutions';
 import { UI_TEXT } from '@/config/site';
 import { FIXTURE_MD, fixtureFile } from '@/test/fixture';
 import { BACKGROUND_DELAY_MS, FIRST_CARDS, MidtermOutline } from './MidtermOutline';
@@ -55,18 +54,6 @@ describe('MidtermOutline', () => {
     const card = document.getElementById('i3.1.1')?.closest('article') as HTMLElement;
     expect(within(card).getByRole('table')).toBeInTheDocument();
     expect(within(card).getByRole('figure', { name: /จับคำ/ })).toBeInTheDocument();
-  });
-
-  it('hides every Sol and Ans while solutions are off', () => {
-    const { container, rerender } = render(<MidtermOutline file={file} mountAll />);
-    expect(container.querySelectorAll('[data-solution]')).toHaveLength(3);
-    rerender(
-      <SolutionsContext.Provider value={{ show: false, setShow: () => {} }}>
-        <MidtermOutline file={file} mountAll />
-      </SolutionsContext.Provider>,
-    );
-    expect(container.querySelectorAll('[data-solution]')).toHaveLength(0);
-    expect(screen.getAllByRole('button', { name: UI_TEXT.showSolution })).toHaveLength(3);
   });
 
   describe('showing the questions one at a time', () => {

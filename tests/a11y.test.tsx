@@ -3,10 +3,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '../src/app/App';
-import { SolutionsContext } from '../src/components/content/solutions';
 import { PAGES, UI_TEXT } from '../src/config/site';
 import { MidtermOutline } from '../src/features/midterm/MidtermOutline';
-import { FIXTURE_MD, fixtureFile, fixtureMeta } from '../src/test/fixture';
+import { FIXTURE_MD, fixtureFile } from '../src/test/fixture';
 import { buildContent } from '../scripts/build-content/index';
 
 // jsdom has no layout, so colour contrast cannot be computed here; the pairings are checked by
@@ -34,7 +33,6 @@ function mockViewport(wide: boolean) {
 
 vi.mock('../src/content/loaders', () => ({
   loadPageContent: () => Promise.resolve(fixtureFile(FIXTURE_MD)),
-  loadPageMeta: () => Promise.resolve(fixtureMeta(fixtureFile(FIXTURE_MD))),
 }));
 
 const realFile = buildContent(process.cwd(), PAGES).pages[0].file;
@@ -66,16 +64,7 @@ describe('accessibility (axe, structure and names)', () => {
     expect(await violationsIn(container)).toEqual([]);
   });
 
-  it('the app with solutions hidden has no violations', async () => {
-    mockViewport(true);
-    window.localStorage.setItem('nlp:show-solutions', '0');
-    const { container } = render(app());
-    await screen.findByRole('heading', { level: 2, name: /Tokenization/ });
-    expect(screen.getAllByRole('button', { name: UI_TEXT.showSolution }).length).toBeGreaterThan(0);
-    expect(await violationsIn(container)).toEqual([]);
-  });
-
-  it('all 35 cards of the real content have no violations (solutions on and off)', async () => {
+  it('all 35 cards of the real content have no violations ', async () => {
     mockViewport(true);
     const on = render(<MidtermOutline file={realFile} mountAll />);
     const onResults = await axe.run(on.container, {
@@ -84,18 +73,5 @@ describe('accessibility (axe, structure and names)', () => {
       rules: { ...OPTIONS.rules, region: { enabled: false } },
     });
     expect(onResults.violations.map((v) => v.id)).toEqual([]);
-    on.unmount();
-
-    const off = render(
-      <SolutionsContext.Provider value={{ show: false, setShow: () => {} }}>
-        <MidtermOutline file={realFile} mountAll />
-      </SolutionsContext.Provider>,
-    );
-    const offResults = await axe.run(off.container, {
-      ...OPTIONS,
-      // the page landmark comes from the app shell, not from this outline
-      rules: { ...OPTIONS.rules, region: { enabled: false } },
-    });
-    expect(offResults.violations.map((v) => v.id)).toEqual([]);
   });
 });

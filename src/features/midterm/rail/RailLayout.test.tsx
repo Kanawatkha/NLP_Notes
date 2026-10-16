@@ -54,26 +54,16 @@ describe('contents on a wide screen', () => {
     expect(nav.closest('[inert]')).toBeNull();
   });
 
-  it('slides the text from where it was to where it is now when the rail folds', () => {
-    const animate = vi.fn().mockReturnValue({ cancel: () => {} });
-    Element.prototype.animate = animate as unknown as typeof Element.prototype.animate;
-    const lefts = [300, 100];
-    const original = HTMLElement.prototype.getBoundingClientRect;
-    HTMLElement.prototype.getBoundingClientRect = function () {
-      const isText = this.className.includes('max-w-[880px]') && this.className.includes('w-full');
-      return isText ? ({ left: lefts.shift() ?? 100 } as DOMRect) : original.call(this);
-    };
-    try {
-      render(<MidtermOutline file={file} mountAll />);
-      fireEvent.click(screen.getByRole('button', { name: UI_TEXT.railClose }));
-      expect(animate).toHaveBeenCalledTimes(1);
-      const [frames] = animate.mock.calls[0];
-      expect(frames[0].transform).toBe('translateX(200px)');
-      expect(frames[1].transform).toBe('translateX(0)');
-    } finally {
-      HTMLElement.prototype.getBoundingClientRect = original;
-      delete (Element.prototype as { animate?: unknown }).animate;
-    }
+  it('gives the room of the rail to the content when it folds, with a transition on the columns', () => {
+    const { container } = render(<MidtermOutline file={file} mountAll />);
+    const grid = container.querySelector('.grid') as HTMLElement;
+    expect(grid.className).toContain('grid-cols-[48px_264px_minmax(0,1fr)]');
+    expect(grid.className).toContain('transition-[grid-template-columns]');
+    expect(grid.className).toContain('motion-reduce:transition-none');
+
+    fireEvent.click(screen.getByRole('button', { name: UI_TEXT.railClose }));
+    expect(grid.className).toContain('grid-cols-[48px_0px_minmax(0,1fr)]');
+    expect(grid.className).not.toContain('max-w-[880px]');
   });
 
   it('jumps to a card that is still a placeholder after mounting every card', () => {

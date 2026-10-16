@@ -7,7 +7,7 @@ import { UI_TEXT } from '@/config/site';
 import { Hero } from '@/features/midterm/Hero';
 import { MidtermOutline } from '@/features/midterm/MidtermOutline';
 import { useAfterPaint } from '@/hooks/useAfterPaint';
-import { usePageContent, usePageMeta } from '@/hooks/usePageContent';
+import { usePageContent } from '@/hooks/usePageContent';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 function LoadError({ retry }: { retry: () => void }) {
@@ -24,28 +24,18 @@ function LoadError({ retry }: { retry: () => void }) {
 }
 
 /**
- * The Midterm page: the content of content/midterm/exam_practice.md. It loads in two steps. The
- * top (title, numbers, button) comes from a small file and is painted first; the content, which is
- * big, is only asked for after that paint, so the first thing a visitor sees does not wait for it.
+ * The Midterm page: the content of content/midterm/exam_practice.md. The hero is static and painted
+ * first; the content, which is big, is only asked for after that paint, so the first thing a visitor
+ * sees does not wait for it.
  */
 export default function MidtermPage() {
   usePageTitle('Midterm');
-  const meta = usePageMeta('midterm');
-  const heroPainted = useAfterPaint(meta.status === 'ready');
+  const heroPainted = useAfterPaint(true);
   const content = usePageContent('midterm', heroPainted);
-
-  if (meta.status === 'error') return <LoadError retry={meta.retry} />;
-  if (meta.status === 'loading') {
-    return (
-      <PageContainer>
-        <PageSkeleton />
-      </PageContainer>
-    );
-  }
 
   return (
     <>
-      <Hero meta={meta.data} />
+      <Hero />
       {content.status === 'ready' ? (
         <MidtermOutline file={content.data} />
       ) : content.status === 'error' ? (

@@ -1,7 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SolutionsProvider } from '@/components/content/SolutionsProvider';
 import { BackToTop } from '@/components/layout/BackToTop';
 import { Navbar } from '@/components/layout/Navbar';
 import { ReadingProgress } from '@/components/layout/ReadingProgress';
@@ -87,9 +86,7 @@ describe('Navbar scroll state', () => {
   it('gets a shadow once the page has scrolled 8 px, and loses it at the top', async () => {
     const { container } = render(
       <MemoryRouter>
-        <SolutionsProvider>
-          <Navbar />
-        </SolutionsProvider>
+        <Navbar />
       </MemoryRouter>,
     );
     const header = container.querySelector('header') as HTMLElement;
@@ -110,9 +107,7 @@ describe('Navbar scroll state', () => {
   it('carries the reading-progress line', () => {
     const { container } = render(
       <MemoryRouter>
-        <SolutionsProvider>
-          <Navbar />
-        </SolutionsProvider>
+        <Navbar />
       </MemoryRouter>,
     );
     expect(container.querySelector('header [data-progress-fill]')).not.toBeNull();

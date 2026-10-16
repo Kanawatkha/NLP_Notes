@@ -1,39 +1,35 @@
+import { Fragment } from 'react';
 import { CountUp } from '@/components/motion/CountUp';
-import { Button } from '@/components/ui/Button';
-import { Icon, type IconName } from '@/components/ui/Icon';
-import { UI_TEXT } from '@/config/site';
-import type { PageMeta } from '@/content/types';
-import { jumpTo } from '@/lib/jumpTo';
-import { AnimatedTitle } from './AnimatedTitle';
+import { Icon } from '@/components/ui/Icon';
+import { HERO, UI_TEXT } from '@/config/site';
 import { TokenChips } from './TokenChips';
 
-type HeroProps = { meta: PageMeta };
-
 /**
- * Pale-mint hero band (UI-SPEC.md section 3): the title of the Markdown file, the numbers computed
- * from the content (they come in a small file of their own, so the hero is painted before the
- * content has loaded), one button that jumps to the first question, and the token-chip graphic.
- * The title enters word by word, the numbers count up (A1 to A3).
+ * Pale-mint hero band (UI-SPEC.md section 3): the title, two numbers (questions and total points,
+ * set in `HERO` for now) and the token-chip graphic. The title enters word by word, the numbers
+ * count up (A1 to A3).
  */
-export function Hero({ meta }: HeroProps) {
-  const { stats, firstQuestionId } = meta;
-  const items: { icon: IconName; value: number; label: string }[] = [
-    { icon: 'layers', value: stats.questions, label: UI_TEXT.statQuestions },
-    { icon: 'list', value: stats.items, label: UI_TEXT.statItems },
-    { icon: 'pencil', value: stats.examples, label: UI_TEXT.statExamples },
-  ];
-  if (stats.totalPoints > 0) {
-    items.push({ icon: 'star', value: stats.totalPoints, label: UI_TEXT.statPoints });
-  }
+export function Hero() {
+  const items = [
+    { icon: 'layers', value: HERO.questions, label: UI_TEXT.statQuestions },
+    { icon: 'star', value: HERO.points, label: UI_TEXT.statPoints },
+  ] as const;
 
   return (
     <section className="bg-canvas-mint">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:px-6 md:py-section">
+      <div className="mx-auto grid max-w-[1200px] items-center gap-6 px-4 py-8 md:grid-cols-[minmax(0,1fr)_auto] md:px-6 md:py-12">
         <div>
           <h1 className="type-h1 max-w-[880px]">
-            <AnimatedTitle nodes={meta.title} />
+            {HERO.title.split(' ').map((word, i) => (
+              <Fragment key={word}>
+                {i > 0 ? ' ' : null}
+                <span className="word-rise" style={{ animationDelay: `${i * 60}ms` }}>
+                  {word}
+                </span>
+              </Fragment>
+            ))}
           </h1>
-          <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-5">
+          <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-5">
             {items.map((s) => (
               <li key={s.label} className="flex items-center gap-3">
                 <Icon name={s.icon} size={24} />
@@ -46,13 +42,8 @@ export function Hero({ meta }: HeroProps) {
               </li>
             ))}
           </ul>
-          {firstQuestionId ? (
-            <div className="mt-8 max-w-[360px]">
-              <Button onClick={() => jumpTo(firstQuestionId)}>{UI_TEXT.startExam}</Button>
-            </div>
-          ) : null}
         </div>
-        <TokenChips className="w-full max-w-[364px] justify-self-center text-ink md:w-[320px] lg:w-[364px]" />
+        <TokenChips className="w-full max-w-[364px] justify-self-center text-ink md:w-[260px] lg:w-[300px]" />
       </div>
     </section>
   );

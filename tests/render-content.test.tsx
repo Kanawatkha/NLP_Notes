@@ -1,10 +1,7 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { SolutionsContext } from '../src/components/content/solutions';
-import { PAGES, UI_TEXT } from '../src/config/site';
+import { PAGES } from '../src/config/site';
 import type { ContentNode } from '../src/content/types';
-import { metaOf } from '../src/content/stats';
-import { Hero } from '../src/features/midterm/Hero';
 import { MidtermOutline } from '../src/features/midterm/MidtermOutline';
 import { plainText } from '../src/lib/text';
 import { buildContent } from '../scripts/build-content/index';
@@ -48,27 +45,9 @@ describe('rendering the real Midterm content', () => {
     expect(container.querySelectorAll('ol')).toHaveLength(page.stats.orderedLists);
   });
 
-  it('shows 35 solutions, and none (but 35 reveal buttons) when the switch is off', () => {
-    const on = render(<MidtermOutline file={page.file} mountAll />);
-    expect(on.container.querySelectorAll('[data-solution]')).toHaveLength(35);
-    on.unmount();
-
-    const off = render(
-      <SolutionsContext.Provider value={{ show: false, setShow: () => {} }}>
-        <MidtermOutline file={page.file} mountAll />
-      </SolutionsContext.Provider>,
-    );
-    expect(off.container.querySelectorAll('[data-solution]')).toHaveLength(0);
-    expect(off.container.querySelectorAll('[data-example]')).toHaveLength(35);
-    expect(screen.getAllByRole('button', { name: UI_TEXT.showSolution })).toHaveLength(35);
-  });
-
-  it('shows the four statistics of the hero, from the meta file the build writes', () => {
-    const { container } = render(<Hero meta={metaOf(page.file)} />);
-    const hero = within(container.querySelector('section.bg-canvas-mint') as HTMLElement);
-    expect(hero.getByText(UI_TEXT.statQuestions).previousSibling).toHaveTextContent('4');
-    expect(hero.getByText(UI_TEXT.statItems).previousSibling).toHaveTextContent('35');
-    expect(hero.getByText(UI_TEXT.statExamples).previousSibling).toHaveTextContent('35');
-    expect(hero.getByText(UI_TEXT.statPoints).previousSibling).toHaveTextContent('19');
+  it('shows 35 solutions, one for every card, with nothing to hide them', () => {
+    const { container } = render(<MidtermOutline file={page.file} mountAll />);
+    expect(container.querySelectorAll('[data-solution]')).toHaveLength(35);
+    expect(container.querySelectorAll('[data-example]')).toHaveLength(35);
   });
 });

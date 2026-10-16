@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { PageId } from '@/config/site';
-import { loadPageContent, loadPageMeta } from '@/content/loaders';
-import type { ContentFile, PageMeta } from '@/content/types';
+import { loadPageContent } from '@/content/loaders';
+import type { ContentFile } from '@/content/types';
 
 export type LoadState<T> =
   { status: 'loading' } | { status: 'error'; retry: () => void } | { status: 'ready'; data: T };
@@ -39,11 +39,6 @@ function useLazy<T>(id: PageId, load: (id: PageId) => Promise<T>, enabled: boole
     };
   }
   return { status: 'ready', data: result.data };
-}
-
-/** The small file for the top of the page. */
-export function usePageMeta(id: PageId): LoadState<PageMeta> {
-  return useLazy(id, loadPageMeta, true);
 }
 
 /** The big content file. Pass `enabled` false to hold it back, for example until the hero is painted. */

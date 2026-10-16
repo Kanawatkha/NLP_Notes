@@ -2,14 +2,12 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Logo } from '@/components/layout/Logo';
 import { ReadingProgress } from '@/components/layout/ReadingProgress';
-import { SolutionsSwitch } from '@/components/layout/SolutionsSwitch';
 import { DEFAULT_ROUTE, PAGES, SITE_NAME } from '@/config/site';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import { cn } from '@/lib/cn';
 
 /**
- * Top navigation (UI-SPEC.md section 2): logo, one tab per page declared in PAGES, and the
- * solutions switch. Sticky, 64 px. The reading-progress line runs along its bottom edge (A4), and
+ * Top navigation (UI-SPEC.md section 2): logo and one tab per page declared in PAGES. Sticky, 64 px. The reading-progress line runs along its bottom edge (A4), and
  * a whisper shadow fades in once the page has scrolled 8 px (A15).
  */
 export function Navbar() {
@@ -48,10 +46,6 @@ export function Navbar() {
             </li>
           ))}
         </ul>
-
-        <div className="ms-auto">
-          <SolutionsSwitch />
-        </div>
       </nav>
       <ReadingProgress />
     </header>

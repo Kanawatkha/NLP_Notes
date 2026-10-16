@@ -25,15 +25,8 @@ export const UI_TEXT = {
   backToMidterm: 'กลับไปหน้า Midterm',
   comingSoon: 'กำลังจัดทำ',
   skipToContent: 'ข้ามไปยังเนื้อหา',
-  solutions: 'แสดงเฉลย',
-  solutionsShort: 'เฉลย',
-  showSolution: 'ดูเฉลย',
-  hideSolution: 'ซ่อนเฉลย',
-  startExam: 'เริ่มทำข้อสอบ',
   points: 'คะแนน',
   statQuestions: 'ข้อใหญ่',
-  statItems: 'หัวข้อย่อย',
-  statExamples: 'โจทย์',
   statPoints: 'คะแนนรวม',
   railOpen: 'เปิดสารบัญ',
   railClose: 'ปิดสารบัญ',
@@ -45,3 +38,6 @@ export const UI_TEXT = {
   offlineReady: 'ใช้งานออฟไลน์ได้แล้ว',
   dismiss: 'ปิด',
 } as const;
+
+/** The numbers and the title shown in the hero. Set by hand until the exam has all its questions. */
+export const HERO = { title: 'Midterm Practice Exam', questions: 5, points: 20 } as const;

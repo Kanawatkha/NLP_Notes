@@ -3,14 +3,13 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '@/app/App';
 import { UI_TEXT } from '@/config/site';
-import { FIXTURE_MD, fixtureFile, fixtureMeta } from '@/test/fixture';
+import { FIXTURE_MD, fixtureFile } from '@/test/fixture';
 
 vi.mock('@/content/loaders', () => ({
   loadPageContent: () => Promise.resolve(fixtureFile(FIXTURE_MD)),
-  loadPageMeta: () => Promise.resolve(fixtureMeta(fixtureFile(FIXTURE_MD))),
 }));
 
-const TITLE = 'แนวข้อสอบทดสอบ (Test Exam)';
+const TITLE = 'Midterm Practice Exam';
 
 function renderAt(path: string) {
   return render(

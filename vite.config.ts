@@ -55,7 +55,7 @@ function preloadFonts(): Plugin {
  * them download in parallel with it.
  */
 function preloadPageChunks(): Plugin {
-  const wanted = /assets\/(MidtermPage|midterm|midterm\.meta)-[\w-]+\.js$/;
+  const wanted = /assets\/(MidtermPage|midterm)-[\w-]+\.js$/;
   return {
     name: 'preload-page-chunks',
     transformIndexHtml: {

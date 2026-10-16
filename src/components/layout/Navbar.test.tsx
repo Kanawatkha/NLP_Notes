@@ -1,16 +1,13 @@
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
-import { SolutionsProvider } from '@/components/content/SolutionsProvider';
 import { Navbar } from '@/components/layout/Navbar';
-import { DEFAULT_ROUTE, PAGES, UI_TEXT } from '@/config/site';
+import { DEFAULT_ROUTE, PAGES } from '@/config/site';
 
 function setup(initial: string) {
   return render(
     <MemoryRouter initialEntries={[initial]}>
-      <SolutionsProvider>
-        <Navbar />
-      </SolutionsProvider>
+      <Navbar />
     </MemoryRouter>,
   );
 }
@@ -35,8 +32,8 @@ describe('Navbar', () => {
     expect(screen.getByRole('link', { name: 'Midterm' })).not.toHaveAttribute('aria-current');
   });
 
-  it('holds the solutions switch', () => {
+  it('has no solutions switch: the solutions are always shown', () => {
     setup(DEFAULT_ROUTE);
-    expect(screen.getByRole('switch', { name: UI_TEXT.solutions })).toBeInTheDocument();
+    expect(screen.queryByRole('switch')).toBeNull();
   });
 });
