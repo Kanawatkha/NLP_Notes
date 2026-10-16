@@ -109,7 +109,7 @@ An **example** is a run of blocks that starts at a problem statement and contain
 - `problem` = blocks between the heading (or the group definition) and the marker.
 - `sol` = blocks after the marker up to the answer line or the next heading.
 - `ans` = the paragraph beginning with `$\mathbf{Ans}` plus following lines of the same paragraph. `ans` may be empty (the current file always has one).
-- Each item holds **exactly one** example. Zero examples gives a warning (the item is shown as plain content); more than one is an error, so the card model stays valid. Split such an item into two headings.
+- Each item holds **exactly one** example. Zero examples makes a definition card (the item is shown as plain content), which is fine when no item of the question has a Sol and gives a warning when its sibling items do; more than one is an error, so the card model stays valid. Split such an item into two headings.
 
 ## 5. Node tree rules
 

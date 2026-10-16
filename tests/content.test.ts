@@ -25,13 +25,14 @@ describe('real content (content/midterm/exam_practice.md)', () => {
   it('has the structure the page is designed for', () => {
     const { questions, groups, items, examples } = page.stats;
     expect({ questions, groups, items, examples }).toEqual({
-      questions: 4,
+      questions: 5,
       groups: 12,
-      items: 35,
+      items: 41,
       examples: 35,
     });
-    expect(page.stats.totalPoints).toBe(19);
+    expect(page.stats.totalPoints).toBe(20);
     expect(page.file.root.children.map((q) => [q.number, q.points])).toEqual([
+      ['1', 1],
       ['2', 2],
       ['3', 10],
       ['4', 4],
@@ -41,7 +42,8 @@ describe('real content (content/midterm/exam_practice.md)', () => {
 
   it('gives every item exactly one example with a problem, a solution and an answer', () => {
     walkNodes(page.file.root, (n) => {
-      if (n.kind !== 'item') return;
+      // ข้อ 1 (Intro to NLP) is made of definition cards: no problem, no Sol
+      if (n.kind !== 'item' || n.id.startsWith('i1.')) return;
       expect(n.examples, n.id).toHaveLength(1);
       const ex = n.examples[0];
       if (ex.t !== 'example') throw new Error(`${n.id}: not an example`);

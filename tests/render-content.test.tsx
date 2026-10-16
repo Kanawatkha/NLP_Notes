@@ -24,7 +24,7 @@ describe('rendering the real Midterm content', () => {
   it('renders every question, group and item with its heading text, id and card', () => {
     const { container } = render(<MidtermOutline file={page.file} mountAll />);
     const nodes = nodesOf(page.file.root);
-    expect(nodes).toHaveLength(4 + 12 + 35);
+    expect(nodes).toHaveLength(5 + 12 + 41);
 
     for (const n of nodes) {
       const el = container.querySelector(`[id="${n.id}"]`);
@@ -34,7 +34,7 @@ describe('rendering the real Midterm content', () => {
       );
     }
     // one article for the page column plus one card per item
-    expect(screen.getAllByRole('article')).toHaveLength(1 + 35);
+    expect(screen.getAllByRole('article')).toHaveLength(1 + 41);
   });
 
   it('renders all formulas, tables and the figure', () => {

@@ -70,6 +70,6 @@ $\mathbf{Ans}\quad ...$
 
 - A `Sol` without an `Ans` is valid but unusual here; every current item has both.
 - Do not use a lone `$` for anything but math.
-- A problem without `Sol` is a plain block and triggers a warning.
+- An item without `Sol` is a plain definition card. The build warns only if a sibling item in the same question has a `Sol` (a likely mistake); a question made only of definitions, like ข้อ 1, builds without warning.
 - Keep the same numbering style in the file; do not mix `2.1` and `ข้อ 2.1`.
 - Lecture slides sometimes contain inconsistent numbers. Use the computed value and note the difference for the user instead of copying the slide.

@@ -173,10 +173,20 @@ describe('tree rules', () => {
     expect([ex.problem.length, ex.sol.length, ex.ans.length]).toEqual([1, 1, 1]);
   });
 
-  it('lets an item without a Sol marker through with a warning', () => {
-    const { file, warnings } = build('# T\n\n## ข้อ 2 ก\n\n### 2.1  ข\n\nข้อความธรรมดา\n');
+  it('warns about an item without a Sol marker when its sibling items have one', () => {
+    const { file, warnings } = build(
+      `# T\n\n## ข้อ 2 ก\n\n### 2.1  ข\n\nข้อความธรรมดา\n\n### 2.2  ค\n\nโจทย์\n\n${SOL}\n\nวิธี\n`,
+    );
     expect(file.root.children[0].children[0].examples).toEqual([]);
     expect(warnings.join('\n')).toMatch(/no Sol marker/);
+  });
+
+  it('lets a question of definitions through without a warning (no item has a Sol)', () => {
+    const { file, warnings } = build(
+      '# T\n\n## ข้อ 1 ก\n\n### 1.1  ข\n\nข้อความธรรมดา\n\n### 1.2  ค\n\nอีกข้อความ\n',
+    );
+    expect(file.root.children[0].children.map((n) => n.examples)).toEqual([[], []]);
+    expect(warnings).toEqual([]);
   });
 
   it('does not warn about a missing problem when the question holds a shared statement', () => {

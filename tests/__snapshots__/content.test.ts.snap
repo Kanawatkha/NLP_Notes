@@ -6,10 +6,10 @@ exports[`real content (content/midterm/exam_practice.md) > keeps counts stable (
   "figures": 1,
   "formulas": 533,
   "groups": 12,
-  "items": 35,
+  "items": 41,
   "orderedLists": 1,
-  "questions": 4,
-  "tables": 41,
-  "totalPoints": 19,
+  "questions": 5,
+  "tables": 48,
+  "totalPoints": 20,
 }
 `;

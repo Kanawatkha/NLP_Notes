@@ -241,7 +241,21 @@ function buildGroup(
   };
 }
 
-function buildQuestion(raw: Raw, ctx: Ctx, qi: number): ContentNode {
+const NO_SOL_WARNING = 'item has no Sol marker';
+
+function hasExample(node: ContentNode): boolean {
+  return node.examples.length > 0 || node.children.some(hasExample);
+}
+
+function buildQuestion(outer: Ctx, raw: Raw, qi: number): ContentNode {
+  // An item without Sol is a definition card. That is normal when the whole question is made of
+  // them (a question of definitions), and a mistake when its sibling items do have a Sol, so the
+  // warning is only passed on in the second case.
+  const held: string[] = [];
+  const ctx: Ctx = {
+    file: outer.file,
+    warn: (m) => (m.includes(NO_SOL_WARNING) ? held.push(m) : outer.warn(m)),
+  };
   const where = `${ctx.file}:${raw.line}`;
   const number = questionNumber(raw.title);
   if (!number)
@@ -258,6 +272,7 @@ function buildQuestion(raw: Raw, ctx: Ctx, qi: number): ContentNode {
     else ctx.warn(`${cw}: item heading has no number; using a positional id`);
     return buildItem(c, ctx, `h3-${qi}-${ci + 1}`, 3, raw.blocks.length > 0, n);
   });
+  if (children.some(hasExample)) held.forEach((m) => outer.warn(m));
   return {
     id: number ? `q${number}` : `h2-${qi}`,
     kind: 'question',
@@ -288,7 +303,7 @@ export function buildContentFile(
     displayTitle: raw.title,
     explain: raw.blocks,
     examples: [],
-    children: raw.children.map((c, qi) => buildQuestion(c, ctx, qi + 1)),
+    children: raw.children.map((c, qi) => buildQuestion(ctx, c, qi + 1)),
     source: { file: meta.file, line: raw.line },
   };
   return { id: meta.id, title: raw.title, root };
