@@ -3,16 +3,14 @@ import { cn } from '@/lib/cn';
 import { ProgressRing } from './ProgressRing';
 import type { RailEntry, ReadingPosition } from './treeModel';
 
-const STAGGER_MAX = 8;
-const STAGGER_BASE_MS = 120;
-const STAGGER_STEP_MS = 30;
+const ENTER_DELAY_MS = 120;
 
 type RailTreeProps = {
   entries: RailEntry[];
   position: ReadingPosition;
   progress: Record<string, number>;
   onSelect: (id: string) => void;
-  /** The first entries rise in one after another (the drawer opening, A10). */
+  /** Every entry rises in, all at the same time (the drawer opening, A10). */
   stagger?: boolean;
   /** Sizing of the scrolling container (the tree scrolls inside it when it is longer than the window). */
   className?: string;
@@ -100,25 +98,18 @@ export function RailTree({
     return () => observer.disconnect();
   }, [position.entryId]);
 
-  let entryIndex = 0;
   const entryButton = (e: RailEntry, depth: 1 | 2 | 3) => {
     const current = e.id === position.entryId;
-    const order = entryIndex++;
-    const staggered = stagger && order < STAGGER_MAX;
     return (
       <button
         type="button"
         data-rail-id={e.id}
         aria-current={current ? 'location' : undefined}
         onClick={() => onSelect(e.id)}
-        style={
-          staggered
-            ? { animationDelay: `${STAGGER_BASE_MS + order * STAGGER_STEP_MS}ms` }
-            : undefined
-        }
+        style={stagger ? { animationDelay: `${ENTER_DELAY_MS}ms` } : undefined}
         className={cn(
           'relative flex w-full items-center gap-3 rounded-sm py-2 pe-3 text-start',
-          staggered && 'rise-in',
+          stagger && 'rise-in',
           depth === 1 && 'type-nav ps-3',
           depth === 2 && 'type-body-sm ps-3',
           depth === 3 && 'type-caption ps-3',

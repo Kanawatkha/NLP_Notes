@@ -260,7 +260,7 @@ Rules:
 | A7 | Problem card | enters view, once | Rises 20 px and fades (`slow`), staggered 40 ms for cards that enter together (max 4). Hover (hover-capable devices only): lifts 2 px with the whisper shadow (`base`) |
 | A8 | Rail highlight and tree | scroll position changes | The highlight slides to the active entry (300 ms); the active question and group expand with a height animation (`base`) and the chevron rotates; the ring sweep updates smoothly |
 | A9 | Rail fold (desktop) | toggle | The rail column shrinks and the content column grows with it (`grid-template-columns`, 380 ms), the rail slides out with a fade, the toggle icon morphs |
-| A10 | Drawer (< 1024) | toggle | Drawer springs in from the left (520 ms; the panel reaches 24 px past the left edge so the overshoot never shows a gap), scrim fades in, the first 8 entries rise in 30 ms apart after 120 ms |
+| A10 | Drawer (< 1024) | toggle | Drawer springs in from the left (520 ms; the panel reaches 24 px past the left edge so the overshoot never shows a gap), scrim fades in, every entry rises in together after 120 ms |
 | A11 | (removed) | | The switch knob; removed with the switch in Phase 9 |
 | A12 | (removed) | | The solution fold and the Ans sheen; removed with the switch in Phase 9 |
 | A13 | Jump arrival | after `jumpTo` | The target heading gets `data-arrive` for 1.8 s: a 3 px mint underline (with a 1 px ink outline) draws left to right and fades out; the heading itself takes focus |
