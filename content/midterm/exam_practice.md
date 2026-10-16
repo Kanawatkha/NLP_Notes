@@ -4,9 +4,9 @@
 
 Tokenization คือการแบ่งข้อความออกเป็นหน่วยย่อยที่เรียกว่า token (อาจเป็นคำ สัญลักษณ์ หรือส่วนของคำ) เพื่อให้คอมพิวเตอร์นำไปประมวลผลต่อได้ จำนวน token จึงขึ้นกับวิธีตัด
 
-กำหนดข้อความ `new renew new renew set reset` (ใช้กับทุกข้อย่อยของข้อ 2 ยกเว้นข้อ 2.2)
-
 ### 2.1  Token และ Type
+
+กำหนดข้อความ `new renew new renew set reset`
 
 $\mathbf{Sol}^{n}$
 
@@ -53,6 +53,8 @@ $\mathbf{Ans}\quad [\text{cat},\ \text{run},\ \text{home}]$ และ NFC รว
 
 ### 2.3  Word-based Tokenization
 
+กำหนดข้อความ `new renew new renew set reset`
+
 $\mathbf{Sol}^{n}$
 
 วิธีทำ ตัดข้อความตามช่องว่าง (และเครื่องหมายวรรคตอน) ได้คำละ 1 token แล้วนับจำนวน token
@@ -70,6 +72,8 @@ $\mathbf{Ans}\quad$ word-based $=\mathbf{6}$ tokens
 ---
 
 ### 2.4  Character-based Tokenization
+
+กำหนดข้อความ `new renew new renew set reset`
 
 $\mathbf{Sol}^{n}$
 
@@ -89,6 +93,8 @@ $\mathbf{Ans}\quad$ character-based $=\mathbf{29}$ tokens
 ---
 
 ### 2.5  BPE Training
+
+กำหนดข้อความ `new renew new renew set reset`
 
 $\mathbf{Sol}^{n}$
 
