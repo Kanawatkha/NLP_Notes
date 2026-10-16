@@ -28,7 +28,7 @@ export function QuestionHeader({ node }: { node: ContentNode }) {
         </p>
       ) : null}
       {lead ? (
-        <p className="type-body-lg max-w-[720px]">
+        <p className="type-body-lg">
           <InlineContent nodes={lead.c} />
         </p>
       ) : null}
