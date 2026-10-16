@@ -15,4 +15,12 @@ describe('Hero', () => {
     );
     expect(screen.queryByRole('button')).toBeNull();
   });
+
+  it('lists the five questions with their points, adding up to the total', () => {
+    expect(HERO.parts).toHaveLength(HERO.questions);
+    expect(HERO.parts.reduce((sum, p) => sum + p.points, 0)).toBe(HERO.points);
+    render(<Hero />);
+    expect(screen.getByText(/ข้อ 3 Word Segmentation.*\(10 คะแนน\)/)).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(HERO.questions);
+  });
 });

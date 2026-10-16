@@ -29,6 +29,13 @@ export function Hero() {
               </Fragment>
             ))}
           </h1>
+          <ul className="type-body-md mt-4 flex flex-col gap-1">
+            {HERO.parts.map((p) => (
+              <li key={p.no}>
+                ข้อ {p.no} {p.name} ({p.points} คะแนน)
+              </li>
+            ))}
+          </ul>
           <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-5">
             {items.map((s) => (
               <li key={s.label} className="flex items-center gap-3">

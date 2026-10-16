@@ -44,8 +44,7 @@ Before any number, probability, table value, tag sequence or parse is written in
 ## 4. Component tests
 
 - Block renderer: one test per block type with a minimal data fixture; an unknown block type is a TypeScript error.
-- `ProblemCard`: shows problem, Sol and Ans when solutions are on; hides Sol and Ans (removed from the DOM) when off; the per-card button reveals only that card; the global switch clears overrides.
-- `SolutionsProvider`: default shown; persists to `localStorage`; works when storage throws (private window).
+- `ExampleBlock`: always shows problem, Sol and Ans, and has no button.
 - `Rail` tree: levels match the data (4 questions, 12 groups, 35 items); only the question and group that contain the active anchor are expanded; selecting an entry calls `jumpTo`; `aria-current="location"` follows the active anchor.
 - `RailToggle`: icon-only, has an accessible name that changes with state, `aria-expanded` and `aria-controls`; no visible text label.
 - `RailDrawer`: opens and closes, traps focus, `Esc` closes and returns focus to the toggle, locks background scroll, closes on selection.
@@ -54,7 +53,7 @@ Before any number, probability, table value, tag sequence or parse is written in
 - Animation helpers: `Reveal` renders its final state immediately under reduced motion; `CountUp` puts the final number in the DOM text from the start; the shared observer reveals once and then disconnects.
 - `PAGES` config: the build reads exactly the declared sources.
 - Outline: every heading title from the Markdown appears in the DOM once mounted (questions, groups, items), and every formula and the figure appear (a test renders all blocks).
-- Navbar: logo link, one "Midterm" tab with `aria-current="page"`, switch is a `role="switch"` with `aria-checked`.
+- Navbar: logo link, one "Midterm" tab with `aria-current="page"`, no switch.
 
 ## 5. Accessibility and layout checks
 
@@ -62,18 +61,18 @@ Run at 360x640, 390x844, 768x1024, 1024x768, 1440x900 and phone landscape 844x39
 
 1. The page loads without console errors.
 2. No horizontal page scroll (`document.scrollingElement.scrollWidth <= innerWidth`); wide tables, display math and the figure scroll inside their own wrapper.
-3. Keyboard: Tab reaches the tab, the switch, the rail toggle, the rail entries and every per-card button; Enter or Space operates them; the focus ring is visible (2 px ink outline). On phone widths the drawer traps focus and `Esc` closes it.
+3. Keyboard: Tab reaches the tab, the rail toggle and the rail entries; Enter or Space operates them; the focus ring is visible (2 px ink outline). On phone widths the drawer traps focus and `Esc` closes it.
 4. axe: zero serious or critical violations, including color contrast with the pairings in `UI-SPEC.md` section 12.
 5. `prefers-reduced-motion` emulation: every item in the `UI-SPEC.md` section 9 rules behaves as specified (no slide, no count-up, no sheen, instant scroll).
 6. Heading order is `h1` (title), `h2` (question), `h3` (group or item), `h4` (item in a group); no skipped levels.
 7. Thai text: tone marks not clipped at heading sizes; no mid-word wrapping inside table cells that breaks reading.
-8. Animation: scroll the whole page at phone width with the Performance panel recording: no long tasks caused by reveals, no layout shift from animations (CLS under 0.1), scroll stays near 60 fps; toggling the global switch with 35 cards does not freeze the page.
+8. Animation: scroll the whole page at phone width with the Performance panel recording: no long tasks caused by reveals, no layout shift from animations (CLS under 0.1), scroll stays near 60 fps; folding and unfolding the rail on desktop with the whole page loaded does not freeze the page.
 
 ## 6. Offline test (Phase 7)
 
 1. `npm run build` then `npm run preview`, open `http://localhost:4173/NLP_Notes/` in a real browser (DevTools, Application, Service Workers: `sw.js` is activated for scope `/NLP_Notes/`).
 2. Wait for the "ใช้งานออฟไลน์ได้แล้ว" toast (it can take a few seconds: 1.8 MiB are cached).
-3. Set the network offline (DevTools, Network, Offline) and reload, also on `#/midterm`. Formulas, the parse-tree figure, tables, fonts and the icons must render; the solutions switch, the contents and the animations must still work.
+3. Set the network offline (DevTools, Network, Offline) and reload, also on `#/midterm`. Formulas, the parse-tree figure, tables, fonts and the icons must render; the contents and the animations must still work.
 4. Online again: rebuild (`npm run build`), keep the preview running, wait up to a minute or switch tabs: the page reloads by itself, or shows "มีเวอร์ชันใหม่ พร้อมใช้งาน" with "โหลดใหม่".
 5. On a phone: open the live site, add it to the home screen, switch to airplane mode, open it from the icon.
 

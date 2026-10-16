@@ -40,4 +40,16 @@ export const UI_TEXT = {
 } as const;
 
 /** The numbers and the title shown in the hero. Set by hand until the exam has all its questions. */
-export const HERO = { title: 'Midterm Practice Exam', questions: 5, points: 20 } as const;
+export const HERO = {
+  title: 'Midterm Practice Exam',
+  questions: 5,
+  points: 20,
+  /** The five questions of the exam and their points (from exam_guidelines.md); they add up to `points`. */
+  parts: [
+    { no: 1, name: 'Intro to NLP', points: 1 },
+    { no: 2, name: 'Tokenization', points: 2 },
+    { no: 3, name: 'Word Segmentation, POS Tagging และ Sequence Labeling', points: 10 },
+    { no: 4, name: 'Syntax and Parsing', points: 4 },
+    { no: 5, name: 'Word Embedding', points: 3 },
+  ],
+} as const;

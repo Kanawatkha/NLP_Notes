@@ -20,13 +20,14 @@ Decided by the agent (the user said to decide; revisit at any gate):
 
 | # | Decision | Alternative |
 |---|---|---|
-| D6 | Layout: formula-sheet style (rail plus content) with exam-style problem cards and a solutions switch | Pure formula sheet, or pure exam page |
+| D6 | Layout: formula-sheet style (rail plus content) with exam-style problem cards (the solutions switch was removed later, D15) | Pure formula sheet, or pure exam page |
 | D7 | Level-4 headings (`####` in ข้อ 3 to 5): extend the parser, tree and renderer to level 4; content unchanged | Edit the content: promote groups to `##` and items to `###` |
 | D8 | PWA offline: yes (prompt toast, version check) | Skip in the first release |
 | D9 | Thai font: Noto Sans Thai (static files) for all Thai text (400 body, 600/700 headings), Titillium Web and Inter for Latin | Prompt for Thai headings |
 | D10 | Content source: one copy only, in `content/midterm/`. Pages are declared in `src/config/site.ts` (`PAGES`), the build never globs | n/a |
 | D11 | Tests: Vitest (round-trip, KaTeX, SVG, components), axe checks, Lighthouse by hand, no Playwright e2e | Add Playwright smoke |
-| D12 | Solutions are shown by default; the switch hides them; remembered in the browser | Hidden by default |
+| D12 | Solutions are shown by default; the switch hides them; remembered in the browser (**superseded by D15**) | Hidden by default |
+| D15 | After launch the user asked for: no solutions switch (solutions always shown), a hero with the fixed title "Midterm Practice Exam", 5 questions and 20 points only, no start button, and a content column that fills the room of the rail (wider when the rail is folded, animated) | Keep the switch; keep the 880 px cap |
 | D13 | Animation: **CSS first with the Web Animations API, no library** (changed in Phase 6 from "Motion with LazyMotion"): springs as `linear()` curves, everything on transform and opacity (height only for the solution fold and the tree), reduced motion respected | Motion with `LazyMotion` |
 | D14 | Repo visibility: public (Pages on a free plan needs it); no slides or PDFs in the repo | Private repo (needs a paid plan for Pages) |
 
@@ -174,6 +175,15 @@ Static layout first, no animation, so the content can be checked against the Mar
 - [ ] User: Settings, Pages, Source "GitHub Actions"; open the live URL; offline check on a phone (`TESTING.md` section 6)
 - [ ] Tag `v1.0.0` after the user approves
 - [ ] Share the Pages URL
+
+## Phase 9 - Changes after launch  (done, pushed in commit 9c50ebe)
+
+- [x] Solutions switch, `SolutionsProvider`, `SolutionsSwitch`, `Fold`, the per-card reveal, the answer sheen and the storage key `nlp:show-solutions` removed; `ExampleBlock` always renders Sol and Ans
+- [x] Hero: title "Midterm Practice Exam", two numbers from the `HERO` constant (5 questions, 20 points), no start button, less padding, a smaller graphic (still animated); `AnimatedTitle` removed; the hero is static, so `MidtermPage` no longer loads the meta file (`usePageMeta` and `loadPageMeta` removed; the build still writes `midterm.meta.json`, which nothing uses now)
+- [x] Layout: the content column has no 880 px cap on desktop; with the rail open it is 840 px at a 1200 px container, folded it takes the rail's room (1104 px). The grid columns animate (380 ms, `transition-[grid-template-columns]`, off under reduced motion), replacing the old FLIP slide
+- [x] Tests: 169 in total (the switch, Fold, hero statistics and slide tests were removed or rewritten); `typecheck`, `lint`, `format:check`, `test`, `build` green. Real browser (1400 px): card width 840, 1104, 840 on fold and unfold, 35 solutions shown, no switch
+- Not measured: Lighthouse after these changes; the frame rate of the width animation on a real device (the rail is a desktop feature, 1024 px and up)
+- [ ] Tag `v1.0.0` after the user approves
 
 ## Future (not planned)
 

@@ -21,7 +21,7 @@ Follow `ARCHITECTURE.md` for structure, `UI-SPEC.md` for behavior and the addend
 4. **Style with tokens.** Tailwind utilities that reference the `@theme` tokens from `DESIGN-jobright.md` (colors, radius, spacing, type). No inline hex, no magic pixel values that duplicate a token. Apply the pairing rules in `UI-SPEC.md` sections 1 and 12: mint is never text on white and never the only state indicator; `muted` is never text.
 5. **Make it accessible.**
    - Semantic element first (`button`, `nav`, `main`, `section`, `h1..h4` in order).
-   - Switches use `role="switch"` and `aria-checked`; disclosure controls expose `aria-expanded` and `aria-controls`.
+   - Disclosure controls expose `aria-expanded` and `aria-controls` (a switch, if one is ever added, uses `role="switch"` with `aria-checked`).
    - Visible focus ring (2 px ink outline), logical tab order, `Esc` closes transient UI and restores focus.
    - Respect `prefers-reduced-motion` (use the `useReducedMotion` hook).
    - Icon-only controls (the rail toggle, the drawer button, back-to-top) have an accessible name and `aria-expanded` or `aria-label`.
@@ -40,7 +40,7 @@ Follow `ARCHITECTURE.md` for structure, `UI-SPEC.md` for behavior and the addend
 - Using the mint accent as the default primary button (the everyday primary is the black pill).
 - Heavy shadows, gradients, or a dark theme.
 - Adding a dependency without asking.
-- Animating width, height or top/left on a long page (use transform and opacity; height only for the solution fold).
+- Animating width, height or top/left on a long page (use transform and opacity; the exceptions are the rail tree height and the rail column width).
 - Creating a new IntersectionObserver per element (use the shared one).
 - Importing the full `motion` bundle (use `LazyMotion` and `m.*`).
 - Reading `localStorage` without try/catch.

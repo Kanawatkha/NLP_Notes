@@ -17,7 +17,7 @@ This project is a trimmed derivative of the 1322201 Digital Logic Notes site (sa
 ## 2. System overview
 
 ```
-content/midterm/exam_practice.md --(scripts/build-content)--> src/content/generated/midterm.json + midterm.meta.json (+ report.txt)
+content/midterm/exam_practice.md --(scripts/build-content)--> src/content/generated/midterm.json (+ midterm.meta.json, unused by the app since Phase 9, + report.txt)
                                                                     |
                           React app (Vite) <------------------------+  one lazy chunk per page
                                     |
@@ -50,16 +50,16 @@ NLP_Notes/
 │  ├─ features/
 │  │  └─ midterm/            MidtermOutline, Hero, QuestionHeader, GroupHeading, ProblemCard,
 │  │                         rail/ (RailLayout, RailTree, RailDrawer, RailToggle, ProgressRing, treeModel),
-│  │                         AnimatedTitle, TokenChips, NumberedHeading, useActiveAnchor
+│  │                         TokenChips, NumberedHeading, useActiveAnchor
 │  ├─ components/
-│  │  ├─ ui/                 Button, Badge, Card, Skeleton, Icon, Prose, Toast, Switch
-│  │  ├─ content/            BlockRenderer, ExampleBlock, Fold, InlineContent, TableBlock, FigureBlock, ScrollArea, SolutionsProvider
-│  │  ├─ layout/             Navbar, Logo, PageContainer, SolutionsSwitch, ReadingProgress, BackToTop
+│  │  ├─ ui/                 Button, Badge, Card, Skeleton, Icon, Prose, Toast
+│  │  ├─ content/            BlockRenderer, ExampleBlock, InlineContent, TableBlock, FigureBlock, ScrollArea
+│  │  ├─ layout/             Navbar, Logo, PageContainer, ReadingProgress, BackToTop
 │  │  └─ motion/             CountUp (reveals live in lib/reveal.ts and hooks/useReveal.ts, keyframes in styles/motion.css)
 │  ├─ content/
 │  │  ├─ types.ts            ContentNode, Block, Inline (shared with scripts)
 │  │  ├─ stats.ts            computeStats, metaOf (also used by the content build)
-│  │  ├─ loaders.ts          PAGES id -> lazy import of generated/<id>.json and <id>.meta.json
+│  │  ├─ loaders.ts          PAGES id -> lazy import of generated/<id>.json
 │  │  └─ generated/          BUILD OUTPUT, git-ignored
 │  ├─ hooks/                 usePageContent, usePageTitle, useMediaQuery, useReveal, useScrollProgress, useFocusTrap, useLockBodyScroll
 │  ├─ lib/                   cn, text (plainText, splitNumber, texLabel), stats, jumpTo, motion, reveal, dragScroll
@@ -77,9 +77,8 @@ The names below come from its `ARCHITECTURE.md` and source tree. Verify each fil
 |---|---|---|
 | `scripts/build-content/*` | **Adapt** | Read only the files declared in `PAGES`; allow level 4; new tree rules (`CONTENT-SCHEMA.md`); keep KaTeX strict, SVG checks, round-trip oracle, report |
 | `src/content/types.ts` | **Adapt** | New `kind` values and `points`, `number` fields |
-| `src/content/loaders.ts` | **Adapt** | Map `PAGES` ids to lazy imports of `generated/<id>.json` and `<id>.meta.json`; no manifest |
-| `src/components/content/*` (BlockRenderer, InlineContent, TableBlock, FigureBlock, ScrollArea, SolutionsProvider) | **Copy**, restyle | Restyle with jobright tokens; storage key renamed to `nlp:show-solutions` |
-| `src/components/layout/SolutionsSwitch.tsx` | **Adapt** | Navbar placement; pill switch with spring |
+| `src/content/loaders.ts` | **Adapt** | Map `PAGES` ids to lazy imports of `generated/<id>.json`; no manifest |
+| `src/components/content/*` (BlockRenderer, InlineContent, TableBlock, FigureBlock, ScrollArea) | **Copy**, restyle | Restyle with jobright tokens |
 | `src/components/layout/{Navbar,Logo,PageContainer}.tsx` | **Adapt** | New logo, tab row with one tab ("Midterm"), no hamburger |
 | `src/components/layout/{MobileMenu,ExamSetTabs}.tsx` | **Drop** | Not needed |
 | `src/features/content-page/{ContentPage,FormulaOutline,ExerciseOutline,useActiveAnchor,jumpTo}` | **Adapt** into `features/midterm` | Merge the rail of `FormulaOutline` with the cards of `ExerciseOutline`; add level 4, the phone drawer, progress rings and the animations. `JumpNav` chips are dropped (replaced by the drawer) |
@@ -97,7 +96,7 @@ The names below come from its `ARCHITECTURE.md` and source tree. Verify each fil
 
 1. `scripts/build-content` reads the files declared in `PAGES` (`src/config/site.ts`). It never globs, so the study notes beside `exam_practice.md` are ignored.
 2. It parses Markdown into blocks, builds the node tree (`CONTENT-SCHEMA.md`), pre-renders every formula with KaTeX in strict mode (HTML plus MathML), keeps the SVG verbatim, validates everything, and writes `generated/<page id>.json` and `generated/report.txt`.
-3. `MidtermPage` loads in two steps. `usePageMeta('midterm')` fetches the small meta file and the hero is painted from it; two frames later (`useAfterPaint`) `usePageContent('midterm')` fetches the big content file (a lazy `import` of `generated/<id>.json`, already preloaded). It shows a skeleton while loading and an error with retry for each step.
+3. `MidtermPage` paints the static `Hero` (constants in `HERO`) first; two frames later (`useAfterPaint`) `usePageContent('midterm')` fetches the big content file (a lazy `import` of `generated/<id>.json`, already preloaded). It shows a skeleton while loading and an error with retry.
 4. Typed data goes to `MidtermOutline`. `BlockRenderer` maps `block.type` to a component. An unknown type fails the type-check, not at runtime.
 5. Computed values (question count, group count, item count, total points, per-question item counts for the rail) are derived from the tree in `lib/`, never typed by hand.
 
@@ -118,8 +117,7 @@ app    ->  pages, components, config
 
 ## 6. State management
 
-- Local component state, plus one context: `SolutionsProvider` (`showSolutions: boolean`, `toggle()`), persisted in `localStorage` under `nlp:show-solutions` with every access wrapped in try/catch (private windows and blocked storage must not break the page); and, in `RailLayout`, the reading position from `useActiveAnchor` (passed down as props, not a context, because only the rail and the Phase 6 progress parts need it).
-- Per-card reveal is local state in `ProblemCard`; the global switch resets it.
+- Local component state only. The reading position from `useActiveAnchor` is held in `RailLayout` and passed down as props, not a context, because only the rail and the progress parts need it. Nothing about the visitor is stored (there is no solutions switch since Phase 9).
 - Rail state (open or folded on desktop, drawer open on phone) is local and not persisted.
 - No global store library.
 
@@ -142,8 +140,8 @@ app    ->  pages, components, config
 
 - One flow layout: on `lg` and up a two-column grid (rail, content); below, a single column with a floating button that opens the rail as a drawer.
 - `useActiveAnchor` (one scroll handler throttled with `requestAnimationFrame`, no per-element observers) publishes the deepest heading reached, how far through each question the reading line is, and the page progress. `RailLayout` owns it and hands the values to the tree, the rings and, in Phase 6, the progress line and back-to-top.
-- Loading is staged for the first load (Phase 8): the hero from the meta file, then the content, then the questions one at a time (`useShownQuestions`), the first two cards at once, further cards when their placeholder comes within 1600 px of the window, and the rest two at a time in idle moments from five seconds after opening. Placeholders keep the id and an estimated height (`lib/estimate.ts`), cards use `content-visibility: auto` with that estimate, a jump from the contents mounts every card first (`flushSync`) and `jumpTo` corrects its position once the scroll has ended.
-- **Animation layer:** CSS first. `src/styles/motion.css` holds the keyframes, the `data-reveal` / `data-shown` rules and the spring curve (`--ease-spring`, a `linear()` list computed from stiffness 380 and damping 30). `lib/reveal.ts` is the one shared IntersectionObserver that sets `data-shown` once per block (`useReveal` hands the callback ref and attribute to a component). Scroll-driven values (`ReadingProgress`, `BackToTop`, the navbar shadow) come from `useScrollProgress`, one frame-throttled scroll handler that writes a CSS transform or sets a boolean. The two measured movements, the solution fold (`Fold`) and the rail fold, use the Web Animations API. `prefers-reduced-motion` is handled in `index.css` (durations and delays go to zero, so every animation ends in its final state) and in the JS paths (`reveal`, `CountUp`, `Fold`, `jumpTo`).
+- Loading is staged for the first load (Phase 8): the static hero, then the content, then the questions one at a time (`useShownQuestions`), the first two cards at once, further cards when their placeholder comes within 1600 px of the window, and the rest two at a time in idle moments from five seconds after opening. Placeholders keep the id and an estimated height (`lib/estimate.ts`), cards use `content-visibility: auto` with that estimate, a jump from the contents mounts every card first (`flushSync`) and `jumpTo` corrects its position once the scroll has ended.
+- **Animation layer:** CSS first. `src/styles/motion.css` holds the keyframes, the `data-reveal` / `data-shown` rules and the spring curve (`--ease-spring`, a `linear()` list computed from stiffness 380 and damping 30). `lib/reveal.ts` is the one shared IntersectionObserver that sets `data-shown` once per block (`useReveal` hands the callback ref and attribute to a component). Scroll-driven values (`ReadingProgress`, `BackToTop`, the navbar shadow) come from `useScrollProgress`, one frame-throttled scroll handler that writes a CSS transform or sets a boolean. The one measured movement, the rail tree fold, uses the Web Animations API; the rail column width is a plain CSS transition. `prefers-reduced-motion` is handled in `index.css` (durations and delays go to zero, so every animation ends in its final state) and in the JS paths (`reveal`, `CountUp`, `Fold`, `jumpTo`).
 - No animation may cause layout shift of content the reader is looking at: reveals use transforms only, folds happen on the card the user pressed.
 
 ## 10. Offline and PWA

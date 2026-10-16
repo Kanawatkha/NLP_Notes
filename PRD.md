@@ -19,12 +19,12 @@ Give one student a fast, clean, readable place to practice the calculation quest
 3. Work offline after the first visit.
 4. Make content changes cheap: edit one Markdown file, push, site updates.
 5. Look friendly and high-energy, following `DESIGN-jobright.md` (mint, black, white; Titillium Web headings; rounded pills and cards), with polished, purposeful animation.
-6. Support self-testing: a global "แสดงเฉลย" switch (and a per-card reveal) hides Sol and Ans.
+6. Show the worked solution (Sol and Ans) of every problem all the time; there is no hide switch (changed after launch, D15).
 
 ## 4. Non-goals
 
 - **One page for now.** The site is "NLP Notes"; its single page is **Midterm** at `#/midterm`. No chapter pages, formula sheet page or home diagram. A final-exam page is a future addition (new Markdown folder, new route, new tab) and is out of scope today.
-- No backend, accounts, comments, analytics, or user data of any kind. The only stored value is the solutions-switch preference in the browser.
+- No backend, accounts, comments, analytics, or user data of any kind. Nothing is stored about the visitor.
 - No dark theme (light only; `DESIGN-jobright.md` defines none).
 - Only `content/midterm/exam_practice.md` is rendered. The study notes beside it (`01..04_*.md`, `exam_guidelines.md`) and the lecture slides or labs are not part of the site.
 - No in-browser Markdown rendering. No editing UI. No search in the first release.
@@ -38,14 +38,14 @@ Give one student a fast, clean, readable place to practice the calculation quest
 | `#/midterm` | Midterm (the only page) | `content/midterm/exam_practice.md` |
 | `*` | Not found (message and link to Midterm) | none |
 
-Navbar: logo and wordmark "NLP Notes" on the left (links to Midterm), one tab "Midterm" (active), the solutions switch on the right. The tab row exists so a future "Final" tab drops in.
+Navbar: logo and wordmark "NLP Notes" on the left (links to Midterm), one tab "Midterm" (active). Nothing on the right. The tab row exists so a future "Final" tab drops in.
 
 The Midterm page, top to bottom:
 
 | # | Section | Source | Notes |
 |---|---|---|---|
 | 1 | Navbar and progress line | UI strings | Sticky; a thin mint line under it shows reading progress |
-| 2 | Hero band | file title (`#`) + computed counts | Mint band, title, stats, one jump button, decorative token-chip graphic |
+| 2 | Hero band | `HERO` constants in `src/config/site.ts` | Mint band, fixed title "Midterm Practice Exam", two numbers (questions 5, total points 20, set by hand in `HERO`), decorative token-chip graphic; no button |
 | 3 | Contents rail (left) | headings | Icon toggle, foldable; drawer on phones |
 | 4 | Questions | `##` ข้อ 2 to ข้อ 5 | Question header panel, definition, shared statement, then groups and cards |
 | 5 | Groups | `###` with `####` children (ข้อ 3, 4, 5) | Group heading with number badge and definition |
@@ -65,11 +65,11 @@ Each `##` opens with a mint header panel: number, title, points (parsed from "(N
 ### F3 Problem cards
 Each item is a card: number and title, problem text, a `Sol` label, solution blocks (tables, display math, figures), and an `Ans` strip. 35 cards in the current content.
 
-### F4 Solutions switch
-A switch in the navbar hides the Sol and Ans of every card (problem stays). Each card also has a "ดูเฉลย" button that reveals only that card. The preference is remembered in the browser. Default state: solutions shown (D12 in `PLAN.md`).
+### F4 Solutions
+The Sol and Ans of every card are always shown. The earlier switch (hide all, reveal one card, remembered in the browser) was removed at the user's request (D15 in `PLAN.md`).
 
 ### F5 Animation
-Hero entrance with a BPE-merge chip graphic and count-up stats, reading-progress line, section reveals, card entrance and hover lift, rail highlight and rings, drawer, switch spring, solution fold with an answer sheen, jump-arrival underline, back-to-top ring. Detailed in `UI-SPEC.md` section 9. Everything respects `prefers-reduced-motion`.
+Hero entrance with a BPE-merge chip graphic and count-up stats, reading-progress line, section reveals, card entrance and hover lift, rail highlight and rings, drawer, the content growing into the room of a folded rail, jump-arrival underline, back-to-top ring. Detailed in `UI-SPEC.md` section 9. Everything respects `prefers-reduced-motion`.
 
 ### F6 Responsive layout
 Phone portrait, phone landscape, tablet, desktop. See `UI-SPEC.md` section 8.
@@ -92,7 +92,7 @@ Name "NLP Notes". Original logo: three token chips in a row, the last one filled
 | Area | Requirement |
 |---|---|
 | Performance | App shell under 150 KB gzip JS+CSS (no animation library); Midterm content chunk under 200 KB gzip (fonts and KaTeX CSS excluded); LCP under 2.5 s on a mid-range phone over 4G; math pre-rendered at build time; animations use transform and opacity only; long page mounts cards in small batches after first paint |
-| Accessibility | WCAG 2.2 AA contrast with the token pairings in `UI-SPEC.md` section 12 (mint is never the only indicator on white), keyboard operation of the rail, drawer, switch and reveal buttons, `prefers-reduced-motion` honored, correct heading order, labels for icon-only controls and the figure |
+| Accessibility | WCAG 2.2 AA contrast with the token pairings in `UI-SPEC.md` section 12 (mint is never the only indicator on white), keyboard operation of the rail and drawer, `prefers-reduced-motion` honored, correct heading order, labels for icon-only controls and the figure |
 | Compatibility | Last 2 versions of Chrome, Safari, Firefox, Edge; iOS Safari 16+ |
 | Reliability | Build fails if any formula fails KaTeX, any SVG contains a blank line, a heading level is not allowed, or the round-trip test fails |
 | Maintainability | Feature-first structure, strict TypeScript, tested content pipeline, documents kept in sync |
@@ -103,7 +103,7 @@ Name "NLP Notes". Original logo: three token chips in a row, the last one filled
 1. `content/midterm/exam_practice.md` converts without error and the round-trip test passes (including the level-4 headings).
 2. `#/` lands on `#/midterm`. The page renders all 4 questions, 17 level-3 headings, 30 level-4 headings and 35 cards, every table, every formula and the figure.
 3. The rail (desktop) and drawer (phone) reach every question, group and item; the icon toggle folds and unfolds with animation; the highlight follows scrolling.
-4. The solutions switch hides and shows all Sol and Ans, is keyboard operable, and its state survives a reload.
+4. Every card shows its Sol and Ans; there is no switch and no reveal button.
 5. All animations in `UI-SPEC.md` section 9 work, hold 60 fps on a mid-range phone in a manual check, and are off under `prefers-reduced-motion`.
 6. Layouts verified at 360x640, 390x844, 768x1024, 1024x768, 1440x900 and phone landscape 844x390 with no horizontal page scroll except inside wide math, tables and the figure.
 7. Offline test: load once, switch the network off, reload and use the page.

@@ -7,14 +7,14 @@ The site shell, the Midterm page, its components, interactions, animation and re
 ### Rules
 
 - Canvas is `canvas` (#ffffff). Text is `ink` (#000000). The page rhythm borrows the design's bands: a mint hero, white body, mint question headers, white problem cards.
-- **Mint (`primary` #00f0a0) is an accent, never text on white.** Its contrast on white is about 1.5:1. Use it as a fill (switch knob, badge, rail bar, the signature pill, progress and sheen effects) next to `ink`, or on black. Any state shown with mint also changes something else (weight, border, text, `aria-*`).
+- **Mint (`primary` #00f0a0) is an accent, never text on white.** Its contrast on white is about 1.5:1. Use it as a fill (badge, rail bar, the signature pill, progress effects) next to `ink`, or on black. Any state shown with mint also changes something else (weight, border, text, `aria-*`).
 - **`canvas-mint` (#ecffe0) is a surface**, always carrying `ink` text (about 20:1).
 - **`muted` (#86909c) is not used for text** (about 3.2:1 on white, lower on mint). It is allowed for decorative strokes only. Anything a student must read is `ink`; secondary text is `ink` at a lighter weight or size, not a lighter color.
 - Links are `ink` with an underline (a `primary` underline of 2 px is allowed as decoration). No mint link text.
 - Everything on a black surface (`ink` fill) uses `on-dark` text; mint on black is allowed for text (about 14:1).
-- Elevation is a hairline or a whisper-soft shadow (`0 4px 16px rgba(0,0,0,0.06)`), never heavy blur. No static gradients. The moving "sheen" (section 9, A12) is a translucent solid bar swept by transform, not a gradient.
+- Elevation is a hairline or a whisper-soft shadow (`0 4px 16px rgba(0,0,0,0.06)`), never heavy blur. No static gradients.
 - Focus is always visible: 2 px `ink` outline with 2 px offset, plus a `primary` outer ring (3 px) on light surfaces. The ink outline carries the contrast.
-- Max content width 1200 px; reading column 880 px inside the grid.
+- Max content width 1200 px. The content column takes the room the rail leaves (no 880 px cap on desktop; 880 px stays the cap on tablet and phone).
 - Every sideways-scrolling area (tables, display math, the figure) can be panned with the right mouse button held down (`src/lib/dragScroll.ts`, carried over from 1322201); touch keeps native scrolling.
 - UI labels shown to students are Thai. Code, comments and docs are English.
 
@@ -55,10 +55,7 @@ From the design file: colors, type roles, radii, spacing, pill buttons, mint ban
 |---|---|
 | site name | NLP Notes |
 | tab | Midterm |
-| solutions switch | แสดงเฉลย |
-| per-card reveal / hide | ดูเฉลย / ซ่อนเฉลย |
-| hero jump button | เริ่มทำข้อสอบ |
-| stat labels | ข้อใหญ่ / หัวข้อย่อย / โจทย์ / คะแนนรวม |
+| stat labels | ข้อใหญ่ / คะแนนรวม |
 | rail toggle (aria-label only, no visible text) | เปิดสารบัญ / ปิดสารบัญ |
 | rail landmark (aria-label) | สารบัญ |
 | back to top | กลับขึ้นบน |
@@ -87,9 +84,8 @@ Every page sets `document.title` to `<page> | NLP Notes` (for example `Midterm |
 - Sticky, 64 px, white, padding `md`. A hairline bottom border and a whisper shadow fade in after the page has scrolled 8 px.
 - Left: logo mark and wordmark "NLP Notes", linking to Midterm.
 - Center-left: the tab row. One tab, "Midterm", `nav-link` style, active state `aria-current="page"` with a black pill (`on-dark` label, radius `pill-nav`). A future "Final" tab drops into the same row.
-- Right: the solutions switch (section 6).
 - No hamburger. No footer.
-- Phones: the tab and the switch share the row with the logo (the switch label shortens, section 6). Below 420 px wide the wordmark text is hidden and only the mark stays, so everything fits at 360 px (checked: no overflow).
+- Phones: the tab shares the row with the logo. Below 420 px wide the wordmark text is hidden and only the mark stays, so everything fits at 360 px (checked: no overflow).
 
 ## 3. The Midterm page
 
@@ -111,10 +107,11 @@ Every page sets `document.title` to `<page> | NLP Notes` (for example `Midterm |
 
 ### Hero (`hero`, mint band)
 
-- Background `canvas-mint`, padding `section` (96 px desktop, 48 px phone), content in the 1200 px container.
-- H1: the file title from the Markdown, `heading-1` (Addendum B), `ink`.
-- Stat row (`stat-item`, three or four items): big number in `heading-3`, caption in `caption` weight 500, all `ink`, with a small line icon. Values are computed from the data: ข้อใหญ่ (questions), หัวข้อย่อย (items), โจทย์ (examples), คะแนนรวม (sum of points, shown only if at least one question has points).
-- One `button-primary` (black pill, radius `xl`): "เริ่มทำข้อสอบ", jumps to the first question. Full width on phone.
+- Background `canvas-mint`, padding 48 px desktop and 32 px phone (compact since Phase 9), content in the 1200 px container.
+- H1: the fixed title "Midterm Practice Exam" (`HERO.title`), `heading-1` (Addendum B), `ink`.
+- Stat row (`stat-item`, two items): big number in `heading-3`, caption in `caption` weight 500, all `ink`, with a small line icon: ข้อใหญ่ 5 and คะแนนรวม 20. The values are the `HERO` constant in `src/config/site.ts`, set by hand until the exam has all its questions; they are not computed from the content.
+- Under the title, a `body-md` list, one question per line ("ข้อ N name (P คะแนน)"), gives the five questions with their points (`HERO.parts`, which must add up to `HERO.points`).
+- No button.
 - Graphic (decorative, `aria-hidden`): a row of rounded "token chips" (abstract rounded rectangles of different widths, no text) that merge pairwise, echoing the logo and the idea of BPE merging. Animation A3. Sits to the right of the title on desktop, below the stats on phone.
 
 ### Content structure
@@ -130,7 +127,7 @@ Vertical rhythm: 48 px between questions (`xxl`), 32 px between groups (`xl`), 2
 ### ProblemCard anatomy
 
 ```
-[ number chip ] Title                                  heading-4          [ ดูเฉลย ]  (only when solutions are hidden)
+[ number chip ] Title                                  heading-4
 problem blocks                                          body-md
 -- Sol label (caption, surface-soft pill) --
 solution blocks (paragraphs, tables, display math, figures)
@@ -139,8 +136,7 @@ Ans strip: canvas-mint fill, 3 px ink bar on the left, the answer paragraph from
 
 - Number chip: `surface-soft` pill with `ink` text (`caption`).
 - Sol label: `caption`, `ink`, on `surface-soft`, radius `full`.
-- Hidden state (switch off): Sol, steps and Ans are removed from layout (the fold animation A12 arrives in Phase 6); the card keeps its problem and shows the per-card "ดูเฉลย" button (`button-dark-square`) directly under the problem. Pressing it reveals that card only; its label becomes "ซ่อนเฉลย" and it carries `aria-expanded`.
-- The global switch sets all cards at once and clears per-card overrides. Cards that are off-screen change instantly (no animation) so a toggle never janks.
+- Sol, steps and Ans are always shown. There is no switch and no reveal button.
 
 ### Block rendering
 
@@ -167,8 +163,8 @@ The rail is a navigation tree with **no visible text label**. It is opened and c
 
 ### Desktop rail (>= 1024)
 
-- Grid under the hero: `48 px toggle gutter | 264 px rail | content` (the rail itself is 248 px wide). At a 1200 px container the text column is 840 px, the cap is 880 px. The rail is sticky at `top: 80px`, scrolls inside itself (max height `100dvh - 8rem`, scrollbar hidden) and is open by default.
-- Folding: the layout changes at once and the movement is played on top with transforms (the 1322201 lesson: animating grid columns re-lays out the whole page every frame). The text column slides from its old place to its new one (FLIP: measure before, animate the difference to zero, 320 ms), the rail slides out with a fade, and the folded rail is `inert` and `aria-hidden`. Because the text column keeps its width (up to 880 px), only its position changes and no centered-element glide is needed.
+- Grid under the hero: `48 px toggle gutter | 264 px rail | content` (the rail itself is 248 px wide). At a 1200 px container the text column is 840 px with the rail open and 1104 px with it folded (no cap). The rail is sticky at `top: 80px`, scrolls inside itself (max height `100dvh - 8rem`, scrollbar hidden) and is open by default.
+- Folding: the rail column of the grid shrinks from 264 px to 0 with a CSS transition on `grid-template-columns` (380 ms, ease-out), so the content column grows into the room and shrinks back when the rail opens; the rail inside slides out with a fade, and the folded rail is `inert` and `aria-hidden`. This replaces the earlier transform-only slide (FLIP): the text now reflows on every frame, which is accepted because cards far from the window are skipped by `content-visibility: auto`. Under reduced motion the change is instant.
 - Only one layout is rendered: the rail on a wide screen, the floating button and drawer below it (`useMediaQuery`), so there is never a second, hidden tree.
 
 ### Tree
@@ -208,18 +204,14 @@ The reading position (the highlighted entry, the expanded question and group, th
 - `ReadingProgress`: a 3 px line directly under the navbar; a track in `hairline` and a fill in `primary` that grows with scroll (`transform: scaleX`, origin left, updated in `requestAnimationFrame`). Decorative and `aria-hidden` (it duplicates the scrollbar).
 - `BackToTop`: a 48 px round button bottom-right (16 px inset plus safe area), `ink` fill, `on-dark` arrow, a thin ring around it that fills `primary` with the page progress. It appears (fade and scale) once the hero has scrolled out of view, scrolls to the top on press, has `aria-label` "กลับขึ้นบน".
 
-## 6. Solutions switch
+## 6. Solutions
 
-- A `role="switch"` button with `aria-checked`, label "แสดงเฉลย" (`nav-link`).
-- Track 44 x 24 px, radius `full`; off: `surface-soft` with a 1 px `ink` border; on: `ink` fill with a `primary` knob (mint on black, 14:1). The knob moves with a spring (A11). The label is always visible, so state is not color-only.
-- Persisted in `localStorage` (`nlp:show-solutions`), read and written inside try/catch; without storage it is an in-memory switch.
-- Phone: the label shortens to "เฉลย" (the `aria-label` stays "แสดงเฉลย").
+Removed after launch (`PLAN.md` D15). Sol and Ans are always shown; there is no switch, no reveal button and no stored preference. The section number is kept so the references to sections 7 and later stay valid.
 
 ## 7. Buttons and controls (from the design)
 
 | Use | Component | Notes |
 |---|---|---|
-| Hero jump | `button-primary` | Black pill, white label, radius `xl` (28), padding `sm` x `section` on desktop, full width on phone, min height 48 px |
 | Toast action | `button-primary-sm` | Black compact pill, radius `pill-nav` (18) |
 | Signature accent | `button-green` | Mint pill with black border, radius `pill` (36). **Not used by default**; reserved so the accent stays rare |
 | Per-card reveal, retry, not-found back | `button-dark-square` | Black, radius `sm` |
@@ -231,7 +223,7 @@ Min touch target 44 px for pills and icon buttons; 40 px for rail rows.
 
 | Size class | Width | Layout |
 |---|---|---|
-| Phone portrait | 360-767 | One column, 16 px gutters, hero padding 48 px, cards padding 16 px, floating rail button (bottom-left) and drawer, back-to-top (bottom-right), full-width hero button |
+| Phone portrait | 360-767 | One column, 16 px gutters, hero padding 32 px, cards padding 16 px, floating rail button (bottom-left) and drawer, back-to-top (bottom-right) |
 | Phone landscape | up to 932 x 430 | As phone; navbar stays 56 px; the floating buttons shrink to 44 px |
 | Tablet | 768-1023 | One column, reading width 880 px, floating rail button and drawer |
 | Desktop | 1024-1440 | Rail 288 px (foldable) plus content column; question header spans the column |
@@ -253,7 +245,7 @@ Rules:
 | `base` | 240 ms | most transitions |
 | `slow` | 480 ms | entrances |
 | ease-out | `cubic-bezier(0.22, 1, 0.36, 1)` | all entrances and slides |
-| spring | stiffness 380, damping 30 (about 2 percent overshoot), written as a CSS `linear()` curve with a cubic-bezier fallback (`--ease-spring`), played over 450 to 520 ms | switch knob, drawer, number badge pop, back-to-top |
+| spring | stiffness 380, damping 30 (about 2 percent overshoot), written as a CSS `linear()` curve with a cubic-bezier fallback (`--ease-spring`), played over 450 to 520 ms | drawer, number badge pop, back-to-top |
 
 ### Catalogue
 
@@ -267,10 +259,10 @@ Rules:
 | A6 | Group heading | enters view, once | Left bar grows (`scaleY`, 480 ms), text and badge fade in (the whole heading fades, `slow`) |
 | A7 | Problem card | enters view, once | Rises 20 px and fades (`slow`), staggered 40 ms for cards that enter together (max 4). Hover (hover-capable devices only): lifts 2 px with the whisper shadow (`base`) |
 | A8 | Rail highlight and tree | scroll position changes | The highlight slides to the active entry (300 ms); the active question and group expand with a height animation (`base`) and the chevron rotates; the ring sweep updates smoothly |
-| A9 | Rail fold (desktop) | toggle | Text column slides from its old place to the new one (FLIP, 320 ms, transform only), the rail slides out with a fade, the toggle icon morphs (`base`) |
+| A9 | Rail fold (desktop) | toggle | The rail column shrinks and the content column grows with it (`grid-template-columns`, 380 ms), the rail slides out with a fade, the toggle icon morphs |
 | A10 | Drawer (< 1024) | toggle | Drawer springs in from the left (520 ms; the panel reaches 24 px past the left edge so the overshoot never shows a gap), scrim fades in, the first 8 entries rise in 30 ms apart after 120 ms |
-| A11 | Switch | toggle | Knob moves with the spring; track color 160 ms |
-| A12 | Solution fold and Ans sheen | switch or per-card button | The solution region folds open or closed (height, 240 ms, Web Animations API) with its content fading; when it opens, a translucent white bar sweeps once across the mint Ans strip (700 ms, transform only; a mint bar would be invisible on mint) |
+| A11 | (removed) | | The switch knob; removed with the switch in Phase 9 |
+| A12 | (removed) | | The solution fold and the Ans sheen; removed with the switch in Phase 9 |
 | A13 | Jump arrival | after `jumpTo` | The target heading gets `data-arrive` for 1.8 s: a 3 px mint underline (with a 1 px ink outline) draws left to right and fades out; the heading itself takes focus |
 | A14 | Back-to-top | after the first screen (scrollY over 75 percent of the window height) | Button fades and scales in (spring); its mint ring tracks the page progress; out of the tab order while hidden |
 | A15 | Navbar | scroll over 8 px | The whisper shadow fades in (`fast`); the hairline track of the reading-progress line is always there |
@@ -278,13 +270,12 @@ Rules:
 
 ### Rules
 
-- Only `transform` and `opacity` animate, with two exceptions: the solution fold (height) and the rail tree expansion (height). Never width, top or left; never anything that shifts the content the reader is looking at.
+- Only `transform` and `opacity` animate, with two exceptions: the rail tree expansion (height) and the rail column width on desktop (A9). Never width, top or left; never anything that shifts the content the reader is looking at.
 - Reveals (A5 to A7) share one IntersectionObserver (`rootMargin` of 10% at the bottom), play once, then stop observing. A block that is already above the window when it is first reported renders in its final state. An observer only reports a crossing, so a block that is jumped over without ever being on screen waits (hidden) until it is scrolled into view, and then plays its entrance.
 - Scroll-driven values (A4, rings, A14) are computed in one `requestAnimationFrame`-throttled scroll handler and applied through CSS custom properties or `transform`.
 - `will-change` is set only while a reveal is waiting to play, never permanently.
-- The global switch animates only the cards in or near the viewport; the others change instantly.
-- **`prefers-reduced-motion: reduce`:** A1 to A7 and A13, A14, A16 render their final state with no movement; counts show the final number; A3 shows the settled row; A8 highlight jumps without sliding and the tree expands instantly; A9 and A10 appear and disappear instantly (the scrim fades only); A11 snaps; A12 shows or hides instantly and has no sheen; `jumpTo` scrolls instantly. A4 and the rings still update (they are state, not motion).
-- **No animation library.** Everything is CSS (keyframes, transitions, the `linear()` spring) plus the Web Animations API for the two measured movements (the solution fold and the rail fold). The `motion` package that the plan first listed is not installed. All keyframes and curves are in `src/styles/motion.css`; reveal state is set by `src/lib/reveal.ts`.
+- **`prefers-reduced-motion: reduce`:** A1 to A7 and A13, A14, A16 render their final state with no movement; counts show the final number; A3 shows the settled row; A8 highlight jumps without sliding and the tree expands instantly; A9 and A10 appear and disappear instantly (the scrim fades only); `jumpTo` scrolls instantly. A4 and the rings still update (they are state, not motion).
+- **No animation library.** Everything is CSS (keyframes, transitions, the `linear()` spring) plus the Web Animations API for the one measured movement (the rail tree fold). The `motion` package that the plan first listed is not installed. All keyframes and curves are in `src/styles/motion.css`; reveal state is set by `src/lib/reveal.ts`.
 
 ## 10. Loading, empty and error states
 

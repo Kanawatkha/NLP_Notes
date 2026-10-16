@@ -3,7 +3,7 @@
 Study site for course 1323404 Natural Language Processing. A static, frontend-only site with one page
 so far, **Midterm**: exam-style problems with worked solutions (Tokenization, Word Segmentation / POS
 Tagging / Sequence Labeling, Syntax and Parsing, Word Embedding), a collapsible contents rail, scroll
-animations, and a switch that hides the solutions so the page works as a self-test. It works offline
+animations (the content grows into the room when the rail is folded), and every solution always shown. It works offline
 once opened. A final-exam page can be added later.
 
 Status: the Midterm page is complete with contents rail, animations and offline mode; launch is prepared: the push to GitHub and the Pages setting are the user's step (see `PLAN.md`).
