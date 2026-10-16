@@ -1,0 +1,268 @@
+/*
+ * Motion (UI-SPEC.md section 9). Only transform and opacity move, except the solution fold (height).
+ * Everything is CSS: the springs are `linear()` curves of a spring with stiffness 380 and damping 30
+ * (about 2 percent overshoot), with a cubic-bezier fallback for browsers without `linear()`.
+ * Reduced motion is handled in index.css (durations and delays go to zero, so every animation
+ * ends in its final state at once) plus the rules marked below.
+ */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.35, 0.64, 1);
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --ease-spring: linear(
+      0,
+      0.041,
+      0.14,
+      0.268,
+      0.402,
+      0.532,
+      0.648,
+      0.746,
+      0.827,
+      0.89,
+      0.937,
+      0.972,
+      0.995,
+      1.01,
+      1.018,
+      1.022,
+      1.023,
+      1.021,
+      1.019,
+      1.016,
+      1.013,
+      1
+    );
+  }
+}
+
+/* ---------- reveal on scroll (A5 to A7): shown once by lib/reveal.ts ---------- */
+
+[data-reveal] {
+  transition:
+    opacity 480ms var(--ease-out),
+    transform 480ms var(--ease-out),
+    box-shadow 200ms ease;
+}
+
+[data-reveal]:not([data-shown]) {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+}
+
+[data-reveal='fade']:not([data-shown]) {
+  transform: none;
+}
+
+/* above the viewport on arrival (a deep jump): final state at once */
+[data-reveal][data-instant] {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal]:not([data-shown]) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A7 hover lift, only for devices that hover */
+@media (hover: hover) and (pointer: fine) {
+  .card-lift[data-shown]:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-float);
+  }
+}
+
+/* children of a revealed block */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+[data-shown] .pop-in {
+  animation: pop-in 520ms var(--ease-spring) 120ms both;
+}
+
+[data-shown] .slide-in-right {
+  animation: slide-in-right 480ms var(--ease-out) 200ms both;
+}
+
+[data-shown] .bar-grow {
+  animation: bar-grow 480ms var(--ease-out) both;
+  transform-origin: top;
+}
+
+[data-reveal]:not([data-shown]) .pop-in,
+[data-reveal]:not([data-shown]) .slide-in-right {
+  opacity: 0;
+}
+
+/* ---------- hero (A1, A3) ---------- */
+
+/*
+ * The words of the title start at 30 percent opacity, not at 0: a browser does not count invisible
+ * text as painted, so with a full fade the title (the largest thing on screen, hence the LCP
+ * element) would only count once its last word has faded in, about a second after it appeared.
+ */
+@keyframes word-rise {
+  from {
+    opacity: 0.3;
+    transform: translateY(24px);
+  }
+}
+
+.word-rise {
+  display: inline-block;
+  animation: word-rise 480ms var(--ease-out) both;
+}
+
+/*
+ * Under reduced motion every animation ends at once (index.css), which leaves the settled picture:
+ * the chips that merged are gone and only the last, mint chip shows.
+ *
+ * Token chips merge in three rounds: the chips of a pair slide together, then cross-fade into one
+ * wider chip. Chips that merge move (chip-out, stay as they end); chips that result from a merge
+ * appear (chip-in). --dx, --delay and --dur are set per chip by TokenChips.tsx.
+ */
+@keyframes chip-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(var(--dx));
+  }
+  86%,
+  100% {
+    opacity: 0;
+    transform: translateX(var(--dx));
+  }
+}
+
+@keyframes chip-in {
+  0%,
+  70% {
+    opacity: 0;
+  }
+  86%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.chip-out {
+  animation: chip-out var(--dur, 800ms) var(--ease-out) var(--delay-out, 0s) forwards;
+}
+
+.chip-in {
+  opacity: 0;
+  animation: chip-in var(--dur, 800ms) linear var(--delay, 0s) both;
+}
+
+.chip-in.chip-out {
+  animation:
+    chip-in var(--dur, 800ms) linear var(--delay, 0s) both,
+    chip-out var(--dur, 800ms) var(--ease-out) var(--delay-out, 0s) forwards;
+}
+
+/* ---------- contents drawer (A10) ---------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.rise-in {
+  animation: rise-in 320ms var(--ease-out) both;
+}
+
+/* ---------- jump arrival (A13) ---------- */
+
+[data-arrive] {
+  position: relative;
+}
+
+[data-arrive]::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -6px;
+  height: 3px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-ink);
+  transform-origin: left;
+  animation: arrive 1700ms var(--ease-out) both;
+}
+
+@keyframes arrive {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  30% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  70% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- solution answer sheen (A12) ---------- */
+
+.ans-strip {
+  position: relative;
+}
+
+.fold[data-opening] .ans-strip::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 30%;
+  background: rgb(255 255 255 / 0.7);
+  transform: translateX(-120%) skewX(-20deg);
+  animation: sheen 700ms var(--ease-out) 200ms both;
+  pointer-events: none;
+}
+
+@keyframes sheen {
+  to {
+    transform: translateX(450%) skewX(-20deg);
+  }
+}
+
+/* ---------- toast (A16) ---------- */
+
+.toast-in {
+  animation: rise-in 240ms var(--ease-out) both;
+}

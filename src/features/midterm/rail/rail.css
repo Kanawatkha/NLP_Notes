@@ -1,0 +1,58 @@
+/* Phone and tablet drawer: the page behind blurs and darkens, the panel slides in from the left. */
+
+.drawer-scrim {
+  background-color: rgb(0 0 0 / 0.4);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: drawer-scrim-in 240ms ease-out both;
+}
+
+.drawer-scrim[data-state='closed'] {
+  animation: drawer-scrim-out 200ms ease-in both;
+}
+
+/* spring slide (A10); the panel reaches 24 px past the left edge so the small overshoot never shows a gap */
+.drawer-panel {
+  animation: drawer-panel-in 520ms var(--ease-spring) both;
+}
+
+.drawer-scrim[data-state='closed'] .drawer-panel {
+  animation: drawer-panel-out 200ms ease-in both;
+}
+
+@keyframes drawer-scrim-in {
+  from {
+    background-color: rgb(0 0 0 / 0);
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes drawer-scrim-out {
+  to {
+    background-color: rgb(0 0 0 / 0);
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes drawer-panel-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes drawer-panel-out {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-scrim,
+  .drawer-scrim[data-state='closed'],
+  .drawer-panel,
+  .drawer-scrim[data-state='closed'] .drawer-panel {
+    animation: none;
+  }
+}

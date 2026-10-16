@@ -1,0 +1,188 @@
+@import 'tailwindcss';
+@import './fonts.css';
+@import './motion.css';
+
+/*
+ * Design tokens copied from DESIGN-jobright.md (single source of truth: that file, never edited;
+ * tests/design-tokens.test.ts compares the two). Light theme only.
+ * Never inline hex values in components, use these tokens. Spacing tokens xxs to xxl equal the
+ * Tailwind steps 1, 2, 3, 4, 6, 8 and 12; only `section` and the navbar height are added.
+ */
+@theme {
+  /* Only the design colors exist: the default Tailwind palette is switched off. */
+  --color-*: initial;
+  --color-primary: #00f0a0;
+  --color-on-primary: #000000;
+  --color-ink: #000000;
+  --color-on-dark: #ffffff;
+  --color-canvas: #ffffff;
+  --color-canvas-mint: #ecffe0;
+  --color-muted: #86909c;
+  --color-hairline: #e5e7eb;
+  --color-surface-soft: #f2f4f5;
+
+  /* Latin glyphs resolve to the DESIGN fonts, Thai glyphs fall through to Noto Sans Thai. */
+  --font-display: 'Titillium Web', 'Noto Sans Thai', system-ui, sans-serif;
+  --font-sans: 'Inter', 'Noto Sans Thai', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Noto Sans Thai', monospace;
+
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-pill-nav: 18px;
+  --radius-pill: 36px;
+  --radius-card: 40px;
+  --radius-full: 9999px;
+
+  --spacing-section: 96px;
+  --spacing-nav: 64px;
+
+  --shadow-float: 0 4px 16px rgb(0 0 0 / 0.06);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    /* Keep the space of the vertical scrollbar so the layout does not jump */
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  /* 2 px ink outline carries the contrast, the mint ring is the brand touch (UI-SPEC.md section 1) */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-primary) 60%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/*
+ * Type scale (DESIGN-jobright.md) with the responsive scale-down and the Thai adjustments of
+ * UI-SPEC.md Addenda A and B: headings never go below line height 1.25 (tone marks), and the
+ * letter spacing of the display tokens is left to `tracking-display` on Latin-only text.
+ */
+@utility type-display {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.25;
+  @media (min-width: 768px) {
+    font-size: 64px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 80px;
+  }
+}
+@utility type-h1 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  @media (min-width: 768px) {
+    font-size: 48px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 60px;
+  }
+}
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.25;
+  @media (min-width: 768px) {
+    font-size: 40px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 48px;
+  }
+}
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 38px;
+  }
+}
+@utility type-h4 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  @media (min-width: 768px) {
+    font-size: 28px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 32px;
+  }
+}
+@utility type-body-lg {
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.6;
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+}
+@utility type-body-md {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+@utility type-body-sm {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+@utility type-button {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+@utility type-nav {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+@utility type-caption {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+@utility tracking-display {
+  letter-spacing: -0.5px;
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}

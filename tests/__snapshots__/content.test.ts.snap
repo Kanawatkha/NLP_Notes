@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`real content (content/midterm/exam_practice.md) > keeps counts stable (review any change before accepting the snapshot) 1`] = `
+{
+  "examples": 35,
+  "figures": 1,
+  "formulas": 532,
+  "groups": 12,
+  "items": 35,
+  "orderedLists": 1,
+  "questions": 4,
+  "tables": 39,
+  "totalPoints": 19,
+}
+`;
